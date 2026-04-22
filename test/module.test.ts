@@ -1,9 +1,23 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import type { WriteFilesAction } from '@ankhorage/orchestrator';
 import { describe, expect, test } from 'bun:test';
 
 import { EXPO_LOCALIZATION_MODULE_ID, expoLocalizationModule } from '../src/module';
 
 describe('expoLocalizationModule', () => {
+  test('keeps module-owned templates in the repo', () => {
+    const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+    expect(Bun.file(path.join(repoRoot, 'templates/i18n.ts.tpl')).size).toBeGreaterThan(0);
+    expect(Bun.file(path.join(repoRoot, 'templates/useT.ts.tpl')).size).toBeGreaterThan(0);
+    expect(
+      Bun.file(path.join(repoRoot, 'templates/LocalizationProvider.tsx.tpl')).size,
+    ).toBeGreaterThan(0);
+    expect(Bun.file(path.join(repoRoot, 'templates/index.ts.tpl')).size).toBeGreaterThan(0);
+  });
+
   test('uses the expected module id', () => {
     expect(expoLocalizationModule.id).toBe(EXPO_LOCALIZATION_MODULE_ID);
   });

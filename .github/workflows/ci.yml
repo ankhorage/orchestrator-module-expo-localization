@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
@@ -23,6 +25,9 @@ jobs:
           BUN_INSTALL_PREINSTALL: '0'
         run: bun install --no-save
 
+      - name: Format Check
+        run: bun run format:check
+
       - name: Lint
         run: bun run lint
 
@@ -31,3 +36,10 @@ jobs:
 
       - name: Build
         run: bun run build
+
+      - name: Knip
+        run: bun run knip
+
+      - name: Changeset Status
+        if: github.event_name == 'pull_request'
+        run: bunx changeset status --since=origin/main

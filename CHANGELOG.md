@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.1.1
+
+### Patch Changes
+
+- Align the module repo with the agreed standard by shipping module-owned template files, adding knip verification, and tightening CI checks.
+
 ## 0.1.0
 
 ### Minor Changes

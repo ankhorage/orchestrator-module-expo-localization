@@ -1,6 +1,6 @@
 {
   "name": "@ankhorage/orchestrator-module-expo-localization",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Expo localization module for @ankhorage/orchestrator.",
   "type": "module",
   "main": "./dist/index.js",
@@ -8,6 +8,7 @@
   "sideEffects": false,
   "files": [
     "dist",
+    "templates",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
@@ -24,6 +25,7 @@
     "lint:fix": "eslint . --fix --max-warnings=0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "knip": "knip",
     "test": "bun test",
     "changeset": "changeset",
     "changeset:version": "changeset version"
@@ -37,6 +39,7 @@
     "@types/bun": "^1.3.11",
     "@types/node": "^25.2.3",
     "eslint": "^10.2.0",
+    "knip": "^5.83.1",
     "prettier": "^3.8.1",
     "typescript": "^5.9.3"
   },
