@@ -1,6 +1,6 @@
 {
   "name": "@ankhorage/orchestrator-module-expo-localization",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Expo localization module for @ankhorage/orchestrator.",
   "type": "module",
   "main": "./dist/index.js",
