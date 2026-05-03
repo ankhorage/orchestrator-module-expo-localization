@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.1.3
+
+### Patch Changes
+
+- 35a8eab: Generate localization wiring through `@ankh/runtime` renderer config (prop resolver + `setLanguage` action handler) instead of Surface translation context.
+
 ## 0.1.2
 
 ### Patch Changes
