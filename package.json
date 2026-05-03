@@ -1,4 +1,5 @@
 {
+  "license": "MIT",
   "name": "@ankhorage/orchestrator-module-expo-localization",
   "version": "0.1.2",
   "description": "Expo localization module for @ankhorage/orchestrator.",
