@@ -15,6 +15,9 @@ describe('expoLocalizationModule', () => {
     expect(
       Bun.file(path.join(repoRoot, 'templates/LocalizationProvider.tsx.tpl')).size,
     ).toBeGreaterThan(0);
+    expect(
+      Bun.file(path.join(repoRoot, 'templates/runtimeLocalization.ts.tpl')).size,
+    ).toBeGreaterThan(0);
     expect(Bun.file(path.join(repoRoot, 'templates/index.ts.tpl')).size).toBeGreaterThan(0);
   });
 
@@ -60,14 +63,25 @@ describe('expoLocalizationModule', () => {
     expect(writeFilesAction.files.map((file) => file.path)).toEqual([
       'src/plugins/localization/i18n.ts',
       'src/plugins/localization/useT.ts',
+      'src/plugins/localization/runtimeLocalization.ts',
       'src/plugins/localization/LocalizationProvider.tsx',
       'src/plugins/localization/index.ts',
       'src/plugins/localization/locales/en.json',
     ]);
-    expect(writeFilesAction.files[2]?.content).toContain(
+    const providerFile = writeFilesAction.files.find(
+      (file) => file.path === 'src/plugins/localization/LocalizationProvider.tsx',
+    );
+    if (!providerFile) {
+      throw new Error('expected LocalizationProvider.tsx file');
+    }
+
+    expect(providerFile.content).toContain(
       'import * as ExpoLocalization from "expo-localization";',
     );
-    expect(writeFilesAction.files[2]?.content).toContain(
+    expect(providerFile.content).toContain('@ankh/runtime');
+    expect(providerFile.content).toContain('RuntimeRendererConfigProvider');
+    expect(providerFile.content).not.toContain('@ankhorage/surface');
+    expect(providerFile.content).toContain(
       '      "en": { translation: require("./locales/en.json") },',
     );
 
@@ -142,10 +156,21 @@ describe('expoLocalizationModule', () => {
       'src/plugins/localization/locales/de.json',
     );
     expect(writeFilesAction.files[0]?.content).toContain('fallbackLng: "de"');
-    expect(writeFilesAction.files[2]?.content).toContain(
+    const providerFile = writeFilesAction.files.find(
+      (file) => file.path === 'src/plugins/localization/LocalizationProvider.tsx',
+    );
+    if (!providerFile) {
+      throw new Error('expected LocalizationProvider.tsx file');
+    }
+
+    expect(providerFile.content).toContain(
       '      "de": { translation: require("./locales/de.json") },',
     );
-    expect(writeFilesAction.files[5]).toEqual({
+    expect(
+      writeFilesAction.files.find(
+        (file) => file.path === 'src/plugins/localization/locales/de.json',
+      ),
+    ).toEqual({
       path: 'src/plugins/localization/locales/de.json',
       content: '{\n  "hello": "Hallo dort"\n}\n',
     });

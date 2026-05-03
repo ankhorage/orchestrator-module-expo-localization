@@ -40,7 +40,7 @@
     "version-packages": "changeset version"
   },
   "dependencies": {
-    "@ankhorage/orchestrator": "^0.1.2"
+    "@ankhorage/orchestrator": "^0.2.1"
   },
   "devDependencies": {
     "@ankhorage/devtools": "^1.0.1",

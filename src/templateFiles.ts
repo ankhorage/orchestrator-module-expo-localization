@@ -32,6 +32,11 @@ export function buildLocalizationWriteFiles(args: {
       overwrite: true,
     },
     {
+      path: 'src/plugins/localization/runtimeLocalization.ts',
+      content: readTemplate('runtimeLocalization.ts.tpl'),
+      overwrite: true,
+    },
+    {
       path: 'src/plugins/localization/LocalizationProvider.tsx',
       content: renderTemplate('LocalizationProvider.tsx.tpl', {
         DEFAULT_LOCALE: JSON.stringify(defaultLocale),
