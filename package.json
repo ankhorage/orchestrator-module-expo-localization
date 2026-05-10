@@ -14,6 +14,14 @@
     "type": "git",
     "url": "git+https://github.com/ankhorage/orchestrator-module-expo-localization.git"
   },
+  "keywords": [
+    "typescript",
+    "expo",
+    "localization",
+    "i18n",
+    "orchestrator-module",
+    "react-native"
+  ],
   "sideEffects": false,
   "files": [
     "dist",
