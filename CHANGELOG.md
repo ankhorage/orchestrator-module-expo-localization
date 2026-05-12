@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.1.4
+
+### Patch Changes
+
+- ee45f8e: Update packages
+
 ## 0.1.3
 
 ### Patch Changes
