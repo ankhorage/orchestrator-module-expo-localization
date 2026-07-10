@@ -74,11 +74,20 @@ describe('expoLocalizationModule', () => {
     if (!providerFile) {
       throw new Error('expected LocalizationProvider.tsx file');
     }
+    const runtimeFile = writeFilesAction.files.find(
+      (file) => file.path === 'src/plugins/localization/runtimeLocalization.ts',
+    );
+    if (!runtimeFile) {
+      throw new Error('expected runtimeLocalization.ts file');
+    }
 
     expect(providerFile.content).toContain(
       'import * as ExpoLocalization from "expo-localization";',
     );
-    expect(providerFile.content).toContain('@ankh/runtime');
+    expect(providerFile.content).toContain('@ankhorage/runtime');
+    expect(providerFile.content).not.toContain('@ankh/runtime');
+    expect(runtimeFile.content).toContain('@ankhorage/runtime');
+    expect(runtimeFile.content).not.toContain('@ankh/runtime');
     expect(providerFile.content).toContain('RuntimeRendererConfigProvider');
     expect(providerFile.content).not.toContain('@ankhorage/surface');
     expect(providerFile.content).toContain(
