@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.1.5
+
+### Patch Changes
+
+- 2b1866c: Generate localization runtime files with direct `@ankhorage/runtime` imports and reject the retired `@ankh/runtime` workspace alias in regression coverage.
+
 ## 0.1.4
 
 ### Patch Changes
