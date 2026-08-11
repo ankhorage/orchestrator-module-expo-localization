@@ -1,6 +1,10 @@
 import { describe, expect, test } from 'bun:test';
 
-import { type ExpoLocalizationAdminHostContext, expoLocalizationAdminRuntime } from '../src/host';
+import {
+  EXPO_LOCALIZATION_ADMIN_OPERATIONS,
+  type ExpoLocalizationAdminHostContext,
+  expoLocalizationAdminRuntime,
+} from '../src/host';
 
 describe('localization admin lifecycle configuration', () => {
   test('routes locale mutations through the injected lifecycle reconfigure boundary', async () => {
@@ -15,14 +19,24 @@ describe('localization admin lifecycle configuration', () => {
       },
     );
 
-    await expoLocalizationAdminRuntime.config.addLocale(context, 'de');
-    await expoLocalizationAdminRuntime.config.setDefaultLocale(context, 'de');
-    const finalConfig = await expoLocalizationAdminRuntime.config.removeLocale(context, 'en');
+    await execute(context, EXPO_LOCALIZATION_ADMIN_OPERATIONS.addLocale, { locale: 'de' });
+    await execute(context, EXPO_LOCALIZATION_ADMIN_OPERATIONS.setDefaultLocale, { locale: 'de' });
+    const finalConfig = await execute(context, EXPO_LOCALIZATION_ADMIN_OPERATIONS.removeLocale, {
+      locale: 'en',
+    });
 
     expect(finalConfig).toEqual({ defaultLocale: 'de', locales: ['de'] });
     expect(reconfigureCount).toBe(3);
   });
 });
+
+function execute(
+  context: ExpoLocalizationAdminHostContext,
+  operation: string,
+  input: unknown,
+): Promise<unknown> {
+  return expoLocalizationAdminRuntime.execute(context, { operation, input });
+}
 
 function createContext(
   readConfig: ExpoLocalizationAdminHostContext['readConfig'],
