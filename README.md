@@ -51,17 +51,17 @@ import { expoLocalizationHostContribution } from '@ankhorage/orchestrator-module
 ```
 
 Its serializable `admin` schema continues to describe lifecycle configuration. The sibling
-`adminRuntime` is server-side and owns rich Localization authoring operations. A host injects only
-generic capabilities: project root, lifecycle config read/reconfigure, manifest/component metadata,
-and manifest-field mutation.
+`adminRuntime` is server-side and conforms to the generic single-entry host contract:
+`execute(context, { operation, input })`. The host treats the operation string, payload, validation,
+and result as opaque module-owned data.
 
-`adminRuntime.config` uses the injected lifecycle reconfiguration boundary for locale/default-locale
-changes. `adminRuntime.dictionaries` writes canonical locale JSON directly, so ordinary translation
-edits never reinstall or reconfigure the module. `adminRuntime.load` derives translatable fields,
-missing translations, search, and filters from module-owned domain APIs. `linkTranslationKey`
-validates eligibility from injected component metadata and uses the generic manifest mutation
-callback; new keys are seeded in the configured default-locale dictionary without overwriting an
-existing translation.
+The package exports `EXPO_LOCALIZATION_ADMIN_OPERATIONS` as the canonical operation IDs. Locale and
+default-locale operations use the injected lifecycle reconfiguration boundary. Dictionary operations
+write canonical locale JSON directly, so ordinary translation edits never reinstall or reconfigure
+the module. The load operation derives translatable fields, missing translations, search, and filters
+from module-owned domain APIs. The link operation validates eligibility from injected component
+metadata and uses the generic manifest mutation callback; new keys are seeded in the configured
+default-locale dictionary without overwriting an existing translation.
 
 ## Why this exists
 
