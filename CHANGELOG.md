@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.4.0
+
+### Minor Changes
+
+- 27d81c9: Add the package-owned Localization administration runtime for lifecycle configuration, canonical dictionary editing, metadata-driven authoring state, and translation-key linking through injected generic host context.
+
 ## 0.3.0
 
 ### Minor Changes
