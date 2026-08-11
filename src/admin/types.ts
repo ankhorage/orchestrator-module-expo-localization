@@ -7,6 +7,11 @@ import type {
 import type { NormalizedExpoLocalizationModuleConfig } from '../config';
 import type { ExpoLocalizationDictionaries } from '../resources';
 
+export interface ExpoLocalizationAdminInvocation {
+  readonly operation: string;
+  readonly input?: unknown;
+}
+
 export interface ExpoLocalizationAdminAuthoringContext {
   readonly screens: readonly ExpoLocalizationManifestScreen[];
   readonly componentMeta: ExpoLocalizationComponentMetaRegistry;
@@ -22,7 +27,7 @@ export interface ExpoLocalizationManifestFieldMutation {
 export interface ExpoLocalizationAdminHostContext {
   readonly projectRoot: string;
   readonly readConfig: () => Promise<unknown>;
-  readonly reconfigureConfig: (config: NormalizedExpoLocalizationModuleConfig) => Promise<void>;
+  readonly reconfigureConfig: (config: unknown) => Promise<void>;
   readonly readAuthoringContext: () => Promise<ExpoLocalizationAdminAuthoringContext>;
   readonly mutateManifestField: (mutation: ExpoLocalizationManifestFieldMutation) => Promise<void>;
 }
