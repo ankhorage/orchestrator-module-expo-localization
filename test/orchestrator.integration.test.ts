@@ -51,7 +51,10 @@ describe('Orchestrator localization resource integration', () => {
         title: 'Author edited',
       });
       expect(
-        await readFile(resolveExpoLocalizationDictionaryPath({ projectRoot, locale: 'en' }), 'utf8'),
+        await readFile(
+          resolveExpoLocalizationDictionaryPath({ projectRoot, locale: 'en' }),
+          'utf8',
+        ),
       ).toBe('{\n  "title": "Author edited"\n}\n');
       const state = await orchestrator.getModule(MODULE_ID);
       expect(state?.installed ? state.installation.config : null).toEqual({
