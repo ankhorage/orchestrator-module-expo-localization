@@ -1,8 +1,8 @@
 import { Button, Card, Input, Stack, Text } from '@ankhorage/zora';
 import { useState } from 'react';
 
+import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/operations';
 import type { ExpoLocalizationAdminSnapshot } from '../admin/types';
-import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/runtime';
 
 interface LocaleManagementCardProps {
   readonly snapshot: ExpoLocalizationAdminSnapshot;
