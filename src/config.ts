@@ -1,46 +1,112 @@
 export interface ExpoLocalizationModuleConfig {
   defaultLocale?: string;
-  locales?: string[];
-  translations?: Record<string, Record<string, string>>;
+  locales?: readonly string[];
+}
+
+export interface NormalizedExpoLocalizationModuleConfig {
+  defaultLocale: string;
+  locales: string[];
+}
+
+export class ExpoLocalizationConfigError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ExpoLocalizationConfigError';
+  }
 }
 
 export function parseExpoLocalizationModuleConfig(
   input: unknown,
-): Required<ExpoLocalizationModuleConfig> {
-  const fallback: Required<ExpoLocalizationModuleConfig> = {
-    defaultLocale: 'en',
-    locales: ['en'],
-    translations: {},
-  };
+): NormalizedExpoLocalizationModuleConfig {
+  const record = isRecord(input) ? input : {};
+  const parsedDefaultLocale = parseLocale(record.defaultLocale);
+  const locales = Array.isArray(record.locales)
+    ? uniqueLocales(record.locales.map(parseLocale).filter(isDefined))
+    : [];
+  const defaultLocale = parsedDefaultLocale ?? locales[0] ?? 'en';
 
-  if (!isRecord(input)) {
-    return fallback;
+  if (!locales.includes(defaultLocale)) {
+    locales.push(defaultLocale);
   }
 
-  const defaultLocale =
-    typeof input.defaultLocale === 'string' && input.defaultLocale.trim().length > 0
-      ? input.defaultLocale.trim()
-      : fallback.defaultLocale;
+  return { defaultLocale, locales };
+}
 
-  const locales =
-    Array.isArray(input.locales) && input.locales.every((value) => typeof value === 'string')
-      ? Array.from(new Set(input.locales.map((value) => value.trim()).filter(Boolean)))
-      : fallback.locales;
+export function normalizeExpoLocalizationLocale(input: string): string {
+  const locale = parseLocale(input);
+  if (!locale) {
+    throw new ExpoLocalizationConfigError(`Invalid locale: ${JSON.stringify(input)}.`);
+  }
+  return locale;
+}
 
-  const translations =
-    isRecord(input.translations) &&
-    Object.values(input.translations).every(
-      (value) =>
-        isRecord(value) && Object.values(value).every((entry) => typeof entry === 'string'),
-    )
-      ? (input.translations as Record<string, Record<string, string>>)
-      : fallback.translations;
+export function addExpoLocalizationLocale(
+  config: ExpoLocalizationModuleConfig,
+  localeInput: string,
+): NormalizedExpoLocalizationModuleConfig {
+  const normalized = parseExpoLocalizationModuleConfig(config);
+  const locale = normalizeExpoLocalizationLocale(localeInput);
+  if (!normalized.locales.includes(locale)) {
+    normalized.locales.push(locale);
+  }
+  return normalized;
+}
 
+export function removeExpoLocalizationLocale(
+  config: ExpoLocalizationModuleConfig,
+  localeInput: string,
+): NormalizedExpoLocalizationModuleConfig {
+  const normalized = parseExpoLocalizationModuleConfig(config);
+  const locale = normalizeExpoLocalizationLocale(localeInput);
+  if (!normalized.locales.includes(locale)) {
+    return normalized;
+  }
+  if (normalized.locales.length === 1) {
+    throw new ExpoLocalizationConfigError('The final configured locale cannot be removed.');
+  }
+
+  const locales = normalized.locales.filter((candidate) => candidate !== locale);
   return {
-    defaultLocale,
-    locales: locales.length > 0 ? locales : fallback.locales,
-    translations,
+    locales,
+    defaultLocale:
+      normalized.defaultLocale === locale
+        ? (locales[0] ?? normalized.defaultLocale)
+        : normalized.defaultLocale,
   };
+}
+
+export function setExpoLocalizationDefaultLocale(
+  config: ExpoLocalizationModuleConfig,
+  localeInput: string,
+): NormalizedExpoLocalizationModuleConfig {
+  const normalized = parseExpoLocalizationModuleConfig(config);
+  const defaultLocale = normalizeExpoLocalizationLocale(localeInput);
+  if (!normalized.locales.includes(defaultLocale)) {
+    throw new ExpoLocalizationConfigError(
+      `Default locale ${JSON.stringify(defaultLocale)} is not configured.`,
+    );
+  }
+  return { ...normalized, defaultLocale };
+}
+
+function parseLocale(input: unknown): string | undefined {
+  if (typeof input !== 'string') return undefined;
+  const candidate = input.trim().replaceAll('_', '-');
+  if (!candidate) return undefined;
+
+  try {
+    return Intl.getCanonicalLocales(candidate)[0];
+  } catch {
+    return undefined;
+  }
+}
+
+function uniqueLocales(locales: readonly string[]): string[] {
+  return [...new Set(locales)];
+}
+
+function isDefined<T>(value: T | undefined): value is T {
+  return value !== undefined;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

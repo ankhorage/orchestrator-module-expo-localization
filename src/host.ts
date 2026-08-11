@@ -20,7 +20,7 @@ export const expoLocalizationHostContribution = {
   admin: {
     kind: 'config-schema',
     title: 'Localization',
-    description: 'Configure supported locales, the default locale, and translation resources.',
+    description: 'Configure supported locales and the default locale.',
     fields: [
       {
         key: 'defaultLocale',
@@ -33,12 +33,6 @@ export const expoLocalizationHostContribution = {
         label: 'Locales',
         control: 'string-list',
         required: true,
-      },
-      {
-        key: 'translations',
-        label: 'Translations',
-        control: 'locale-string-map',
-        required: false,
       },
     ],
   },

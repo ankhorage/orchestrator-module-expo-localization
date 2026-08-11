@@ -1,69 +1,82 @@
 import { describe, expect, test } from 'bun:test';
 
-import { parseExpoLocalizationModuleConfig } from '../src/config';
+import {
+  addExpoLocalizationLocale,
+  ExpoLocalizationConfigError,
+  normalizeExpoLocalizationLocale,
+  parseExpoLocalizationModuleConfig,
+  removeExpoLocalizationLocale,
+  setExpoLocalizationDefaultLocale,
+} from '../src/config';
 
-describe('parseExpoLocalizationModuleConfig', () => {
-  test('returns defaults for empty input', () => {
-    const result = parseExpoLocalizationModuleConfig(undefined);
-
-    expect(result.defaultLocale).toBe('en');
-    expect(result.locales).toEqual(['en']);
-    expect(result.translations).toEqual({});
-  });
-
-  test('parses valid locales and defaultLocale', () => {
-    const result = parseExpoLocalizationModuleConfig({
-      locales: ['en', 'de'],
-      defaultLocale: 'de',
-    });
-
-    expect(result.locales).toEqual(['en', 'de']);
-    expect(result.defaultLocale).toBe('de');
-  });
-
-  test('parses translations', () => {
-    const result = parseExpoLocalizationModuleConfig({
-      locales: ['en', 'de'],
+describe('expo localization config', () => {
+  test('returns a valid default configuration for empty input', () => {
+    expect(parseExpoLocalizationModuleConfig(undefined)).toEqual({
       defaultLocale: 'en',
-      translations: {
-        en: { hello: 'Hello', app_title: 'My App' },
-        de: { hello: 'Hallo', app_title: 'Meine App' },
-      },
-    });
-
-    expect(result.translations).toEqual({
-      en: { hello: 'Hello', app_title: 'My App' },
-      de: { hello: 'Hallo', app_title: 'Meine App' },
+      locales: ['en'],
     });
   });
 
-  test('falls back to empty translations for invalid translations value', () => {
-    const result = parseExpoLocalizationModuleConfig({ translations: 'not-an-object' });
-
-    expect(result.translations).toEqual({});
+  test('canonicalizes, deduplicates, and filters locales', () => {
+    expect(
+      parseExpoLocalizationModuleConfig({
+        locales: [' pt_br ', 'pt-BR', 'de', '', 'not a locale'],
+        defaultLocale: 'de',
+      }),
+    ).toEqual({ defaultLocale: 'de', locales: ['pt-BR', 'de'] });
   });
 
-  test('falls back to empty translations when a locale entry is not an object', () => {
-    const result = parseExpoLocalizationModuleConfig({
-      translations: { en: ['not', 'an', 'object'] },
+  test('always adds a valid default locale to the configured locale set', () => {
+    expect(parseExpoLocalizationModuleConfig({ locales: ['en'], defaultLocale: 'de' })).toEqual({
+      defaultLocale: 'de',
+      locales: ['en', 'de'],
     });
-
-    expect(result.translations).toEqual({});
   });
 
-  test('falls back to empty translations when a value is not a string', () => {
-    const result = parseExpoLocalizationModuleConfig({
-      translations: { en: { hello: 42 } },
-    });
-
-    expect(result.translations).toEqual({});
+  test('ignores legacy translations instead of keeping a second writable config copy', () => {
+    expect(
+      parseExpoLocalizationModuleConfig({
+        defaultLocale: 'en',
+        locales: ['en'],
+        translations: { en: { hello: 'Hello' } },
+      }),
+    ).toEqual({ defaultLocale: 'en', locales: ['en'] });
   });
 
-  test('deduplicates and trims locales', () => {
-    const result = parseExpoLocalizationModuleConfig({
-      locales: [' en ', 'en', 'de', ''],
+  test('adds locales idempotently', () => {
+    expect(addExpoLocalizationLocale({ locales: ['en'] }, ' DE ')).toEqual({
+      defaultLocale: 'en',
+      locales: ['en', 'de'],
     });
+    expect(addExpoLocalizationLocale({ locales: ['en', 'de'] }, 'de')).toEqual({
+      defaultLocale: 'en',
+      locales: ['en', 'de'],
+    });
+  });
 
-    expect(result.locales).toEqual(['en', 'de']);
+  test('removes locales and selects a deterministic replacement default', () => {
+    expect(
+      removeExpoLocalizationLocale({ defaultLocale: 'de', locales: ['en', 'de', 'fr'] }, 'de'),
+    ).toEqual({ defaultLocale: 'en', locales: ['en', 'fr'] });
+  });
+
+  test('prevents removal of the final locale', () => {
+    expect(() => removeExpoLocalizationLocale({ locales: ['en'] }, 'en')).toThrow(
+      ExpoLocalizationConfigError,
+    );
+  });
+
+  test('requires a configured default locale', () => {
+    expect(setExpoLocalizationDefaultLocale({ locales: ['en', 'de'] }, 'de')).toEqual({
+      defaultLocale: 'de',
+      locales: ['en', 'de'],
+    });
+    expect(() => setExpoLocalizationDefaultLocale({ locales: ['en'] }, 'de')).toThrow(
+      'Default locale "de" is not configured.',
+    );
+  });
+
+  test('rejects invalid locale identifiers explicitly', () => {
+    expect(() => normalizeExpoLocalizationLocale('../en')).toThrow(ExpoLocalizationConfigError);
   });
 });

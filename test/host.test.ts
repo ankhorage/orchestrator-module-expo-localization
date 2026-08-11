@@ -20,7 +20,6 @@ describe('expo localization host contribution', () => {
     expect(expoLocalizationHostContribution.admin.fields.map((field) => field.key)).toEqual([
       'defaultLocale',
       'locales',
-      'translations',
     ]);
   });
 

@@ -1,10 +1,14 @@
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import type { WriteFilesAction } from '@ankhorage/orchestrator';
 import { describe, expect, test } from 'bun:test';
 
+import type { ExpoLocalizationModuleConfig } from '../src/config';
 import { EXPO_LOCALIZATION_MODULE_ID, expoLocalizationModule } from '../src/module';
+import { writeExpoLocalizationDictionary } from '../src/resources';
 
 describe('expoLocalizationModule', () => {
   test('keeps module-owned templates in the repo', () => {
@@ -142,7 +146,7 @@ describe('expoLocalizationModule', () => {
     });
   });
 
-  test('uses custom locales and translations when planning files', async () => {
+  test('migrates legacy ledger translations into canonical resource files', async () => {
     const actions = await Promise.resolve(
       expoLocalizationModule.plan({
         projectRoot: '/virtual/project',
@@ -154,6 +158,8 @@ describe('expoLocalizationModule', () => {
             en: { hello: 'Hello there' },
             de: { hello: 'Hallo dort' },
           },
+        } as ExpoLocalizationModuleConfig & {
+          translations: Record<string, Record<string, string>>;
         },
       }),
     );
@@ -187,5 +193,34 @@ describe('expoLocalizationModule', () => {
       path: 'src/modules/localization/locales/de.json',
       content: '{\n  "hello": "Hallo dort"\n}\n',
     });
+  });
+
+  test('uses the canonical dictionary resource directly for generated runtime consumption', async () => {
+    const projectRoot = await mkdtemp(path.join(tmpdir(), 'expo-localization-module-'));
+    try {
+      await writeExpoLocalizationDictionary({
+        projectRoot,
+        locale: 'de',
+        dictionary: { hello: 'Canonical Hallo' },
+      });
+
+      const actions = await Promise.resolve(
+        expoLocalizationModule.plan({
+          projectRoot,
+          moduleId: EXPO_LOCALIZATION_MODULE_ID,
+          config: { defaultLocale: 'de', locales: ['de'] },
+        }),
+      );
+      const writeFilesAction = actions.find(
+        (action): action is WriteFilesAction => action.type === 'write-files',
+      );
+      expect(
+        writeFilesAction?.files.find(
+          (file) => file.path === 'src/modules/localization/locales/de.json',
+        )?.content,
+      ).toBe('{\n  "hello": "Canonical Hallo"\n}\n');
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
   });
 });
