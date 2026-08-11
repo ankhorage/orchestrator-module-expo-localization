@@ -22,7 +22,8 @@ export {
   removeExpoLocalizationLocale,
   setExpoLocalizationDefaultLocale,
 } from './config';
-export { EXPO_LOCALIZATION_MODULE_ID, expoLocalizationModule } from './module';
+export { EXPO_LOCALIZATION_MODULE_ID } from './id';
+export { expoLocalizationModule } from './module';
 export {
   deleteExpoLocalizationTranslation,
   EXPO_LOCALIZATION_RESOURCE_DIRECTORY,
