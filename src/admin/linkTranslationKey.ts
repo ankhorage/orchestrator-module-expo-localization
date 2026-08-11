@@ -7,6 +7,7 @@ import {
 import type {
   ExpoLocalizationAdminHostContext,
   ExpoLocalizationLinkTranslationInput,
+  ExpoLocalizationManifestFieldMutation,
 } from './types';
 
 export async function linkExpoLocalizationTranslationKey(
@@ -26,7 +27,9 @@ export async function linkExpoLocalizationTranslationKey(
       candidate.keyProp === input.keyProp,
   );
   if (!field) {
-    throw new Error('The requested manifest field is not translatable according to component metadata.');
+    throw new Error(
+      'The requested manifest field is not translatable according to component metadata.',
+    );
   }
 
   const key = input.key.trim();
@@ -41,7 +44,7 @@ export async function linkExpoLocalizationTranslationKey(
     throw new Error('A new translation key requires a non-empty default-locale value.');
   }
 
-  const mutation = {
+  const mutation: ExpoLocalizationManifestFieldMutation = {
     screenId: field.screenId,
     nodeId: field.nodeId,
     prop: field.keyProp,
@@ -50,14 +53,20 @@ export async function linkExpoLocalizationTranslationKey(
   await context.mutateManifestField(mutation);
 
   if (needsSeed) {
-    await persistSeedOrRestoreManifest(context, mutation, field.currentKey, config.defaultLocale, seedValue);
+    await persistSeedOrRestoreManifest(
+      context,
+      mutation,
+      field.currentKey,
+      config.defaultLocale,
+      seedValue,
+    );
   }
   return { key, defaultLocale: config.defaultLocale };
 }
 
 async function persistSeedOrRestoreManifest(
   context: ExpoLocalizationAdminHostContext,
-  mutation: { readonly screenId: string; readonly nodeId: string; readonly prop: string },
+  mutation: ExpoLocalizationManifestFieldMutation,
   previousKey: string,
   locale: string,
   value: string,
