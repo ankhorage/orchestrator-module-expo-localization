@@ -6,7 +6,8 @@ import { fileURLToPath } from 'node:url';
 import type { WriteFilesAction } from '@ankhorage/orchestrator';
 import { describe, expect, test } from 'bun:test';
 
-import { EXPO_LOCALIZATION_MODULE_ID, expoLocalizationModule } from '../src/module';
+import { EXPO_LOCALIZATION_MODULE_ID } from '../src/id';
+import { expoLocalizationModule } from '../src/module';
 import { writeExpoLocalizationDictionary } from '../src/resources';
 
 describe('expoLocalizationModule', () => {
