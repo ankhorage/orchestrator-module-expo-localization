@@ -1,4 +1,4 @@
-import { EXPO_LOCALIZATION_MODULE_ID } from '../module';
+import { EXPO_LOCALIZATION_MODULE_ID } from '../id';
 import { ExpoLocalizationAdminView } from './ExpoLocalizationAdminView';
 
 export { ExpoLocalizationAdminView } from './ExpoLocalizationAdminView';

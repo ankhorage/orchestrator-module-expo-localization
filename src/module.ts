@@ -1,10 +1,9 @@
 import { defineModule, type ModuleAction, type ModuleDefinition } from '@ankhorage/orchestrator';
 
 import { type ExpoLocalizationModuleConfig, parseExpoLocalizationModuleConfig } from './config';
+import { EXPO_LOCALIZATION_MODULE_ID } from './id';
 import { readExpoLocalizationResourceSeeds } from './resources';
 import { buildLocalizationWriteFiles } from './templateFiles';
-
-export const EXPO_LOCALIZATION_MODULE_ID = 'expo-localization';
 
 export const expoLocalizationModule: ModuleDefinition<ExpoLocalizationModuleConfig> =
   defineModule<ExpoLocalizationModuleConfig>({
