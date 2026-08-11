@@ -115,10 +115,14 @@ function readRequiredString(input: unknown, key: string): string {
 }
 
 function requireRecord(value: unknown): Readonly<Record<string, unknown>> {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+  if (!isRecord(value)) {
     throw new Error('Localization admin operation input must be an object.');
   }
   return value;
+}
+
+function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function readString(value: unknown, key: string): string {
