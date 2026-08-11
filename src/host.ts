@@ -3,8 +3,10 @@ import { parseExpoLocalizationModuleConfig } from './config';
 import { EXPO_LOCALIZATION_MODULE_ID, expoLocalizationModule } from './module';
 
 export {
+  EXPO_LOCALIZATION_ADMIN_OPERATIONS,
   type ExpoLocalizationAdminAuthoringContext,
   type ExpoLocalizationAdminHostContext,
+  type ExpoLocalizationAdminInvocation,
   type ExpoLocalizationAdminLoadOptions,
   expoLocalizationAdminRuntime,
   type ExpoLocalizationAdminSnapshot,
