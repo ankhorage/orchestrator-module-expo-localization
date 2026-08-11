@@ -49,14 +49,19 @@ describe('localization admin translation linking', () => {
     });
 
     try {
-      await expect(
-        expoLocalizationAdminRuntime.linkTranslationKey(context, {
+      let failure: unknown;
+      try {
+        await expoLocalizationAdminRuntime.linkTranslationKey(context, {
           screenId: 'home',
           nodeId: 'unknown',
           keyProp: 'i18nKey',
           key: 'home.unknown',
-        }),
-      ).rejects.toThrow('not translatable');
+        });
+      } catch (error) {
+        failure = error;
+      }
+      expect(failure).toBeInstanceOf(Error);
+      expect(failure instanceof Error ? failure.message : '').toContain('not translatable');
       expect(mutations).toBe(0);
       expect(await readExpoLocalizationDictionary({ projectRoot, locale: 'en' })).toEqual({});
     } finally {
