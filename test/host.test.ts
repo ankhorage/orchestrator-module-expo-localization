@@ -25,12 +25,19 @@ describe('expo localization host contribution', () => {
   });
 
   test('keeps root standalone and host runtime free of Studio, ZORA, React, and ledger internals', async () => {
-    const packageJson: unknown = JSON.parse(await readFile(join(process.cwd(), 'package.json'), 'utf8'));
+    const packageJson: unknown = JSON.parse(
+      await readFile(join(process.cwd(), 'package.json'), 'utf8'),
+    );
     if (!isPackageJson(packageJson)) throw new Error('invalid package.json');
     const adminSources = await Promise.all(
-      ['types.ts', 'load.ts', 'configOperations.ts', 'dictionaryOperations.ts', 'linkTranslationKey.ts', 'runtime.ts'].map(
-        (file) => readFile(join(process.cwd(), 'src/admin', file), 'utf8'),
-      ),
+      [
+        'types.ts',
+        'load.ts',
+        'configOperations.ts',
+        'dictionaryOperations.ts',
+        'linkTranslationKey.ts',
+        'runtime.ts',
+      ].map((file) => readFile(join(process.cwd(), 'src/admin', file), 'utf8')),
     );
     const source = adminSources.join('\n');
 

@@ -1,9 +1,9 @@
 import {
   addExpoLocalizationLocale,
+  type NormalizedExpoLocalizationModuleConfig,
   parseExpoLocalizationModuleConfig,
   removeExpoLocalizationLocale,
   setExpoLocalizationDefaultLocale,
-  type NormalizedExpoLocalizationModuleConfig,
 } from '../config';
 import type { ExpoLocalizationAdminHostContext } from './types';
 

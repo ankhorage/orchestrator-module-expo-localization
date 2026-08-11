@@ -1,9 +1,6 @@
 import { collectExpoLocalizationTranslatableFields } from '../authoring';
 import { parseExpoLocalizationModuleConfig } from '../config';
-import {
-  readExpoLocalizationDictionary,
-  setExpoLocalizationTranslation,
-} from '../resources';
+import { readExpoLocalizationDictionary, setExpoLocalizationTranslation } from '../resources';
 import type {
   ExpoLocalizationAdminHostContext,
   ExpoLocalizationLinkTranslationInput,

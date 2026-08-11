@@ -1,7 +1,7 @@
 import {
   deleteExpoLocalizationTranslation,
-  setExpoLocalizationTranslation,
   type ExpoLocalizationDictionary,
+  setExpoLocalizationTranslation,
 } from '../resources';
 import type { ExpoLocalizationAdminHostContext } from './types';
 

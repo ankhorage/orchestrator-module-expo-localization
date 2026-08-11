@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { describe, expect, test } from 'bun:test';
 
-import { expoLocalizationAdminRuntime, type ExpoLocalizationAdminHostContext } from '../src/host';
+import { type ExpoLocalizationAdminHostContext, expoLocalizationAdminRuntime } from '../src/host';
 import { readExpoLocalizationDictionary } from '../src/resources';
 
 describe('localization admin dictionary operations', () => {

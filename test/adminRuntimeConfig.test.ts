@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 
-import { expoLocalizationAdminRuntime, type ExpoLocalizationAdminHostContext } from '../src/host';
+import { type ExpoLocalizationAdminHostContext, expoLocalizationAdminRuntime } from '../src/host';
 
 describe('localization admin lifecycle configuration', () => {
   test('routes locale mutations through the injected lifecycle reconfigure boundary', async () => {

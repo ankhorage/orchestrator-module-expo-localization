@@ -5,8 +5,8 @@ import path from 'node:path';
 import { describe, expect, test } from 'bun:test';
 
 import {
-  expoLocalizationAdminRuntime,
   type ExpoLocalizationAdminHostContext,
+  expoLocalizationAdminRuntime,
   type ExpoLocalizationManifestFieldMutation,
 } from '../src/host';
 import { readExpoLocalizationDictionary } from '../src/resources';
@@ -73,21 +73,22 @@ function createContext(
     projectRoot,
     readConfig: () => Promise.resolve({ defaultLocale: 'en', locales: ['en', 'de'] }),
     reconfigureConfig: () => Promise.reject(new Error('unexpected reconfigure')),
-    readAuthoringContext: () => Promise.resolve({
-      screens: [
-        {
-          id: 'home',
-          root: {
-            id: 'title',
-            type: 'Text',
-            props: { text: 'Welcome', i18nKey: '' },
+    readAuthoringContext: () =>
+      Promise.resolve({
+        screens: [
+          {
+            id: 'home',
+            root: {
+              id: 'title',
+              type: 'Text',
+              props: { text: 'Welcome', i18nKey: '' },
+            },
           },
+        ],
+        componentMeta: {
+          Text: { i18n: { fields: [{ keyProp: 'i18nKey', defaultTextProp: 'text' }] } },
         },
-      ],
-      componentMeta: {
-        Text: { i18n: { fields: [{ keyProp: 'i18nKey', defaultTextProp: 'text' }] } },
-      },
-    }),
+      }),
     mutateManifestField,
   };
 }
