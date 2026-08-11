@@ -46,7 +46,9 @@ describe('localization admin authoring state', () => {
 });
 
 function isAdminSnapshot(value: unknown): value is ExpoLocalizationAdminSnapshot {
-  return typeof value === 'object' && value !== null && 'fields' in value && 'visibleFields' in value;
+  return (
+    typeof value === 'object' && value !== null && 'fields' in value && 'visibleFields' in value
+  );
 }
 
 const AUTHORING_CONTEXT = {
