@@ -52,7 +52,7 @@
     "version-packages": "changeset version"
   },
   "dependencies": {
-    "@ankhorage/orchestrator": "^0.3.0"
+    "@ankhorage/orchestrator": "^0.3.1"
   },
   "devDependencies": {
     "@ankhorage/devtools": "^1.0.6",

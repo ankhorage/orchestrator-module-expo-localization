@@ -1,6 +1,7 @@
 import { defineModule, type ModuleAction, type ModuleDefinition } from '@ankhorage/orchestrator';
 
 import { type ExpoLocalizationModuleConfig, parseExpoLocalizationModuleConfig } from './config';
+import { readExpoLocalizationResourceSeeds } from './resources';
 import { buildLocalizationWriteFiles } from './templateFiles';
 
 export const EXPO_LOCALIZATION_MODULE_ID = 'expo-localization';
@@ -8,8 +9,13 @@ export const EXPO_LOCALIZATION_MODULE_ID = 'expo-localization';
 export const expoLocalizationModule: ModuleDefinition<ExpoLocalizationModuleConfig> =
   defineModule<ExpoLocalizationModuleConfig>({
     id: EXPO_LOCALIZATION_MODULE_ID,
-    plan(context): ModuleAction[] {
+    async plan(context): Promise<ModuleAction[]> {
       const config = parseExpoLocalizationModuleConfig(context.config);
+      const translations = await readExpoLocalizationResourceSeeds({
+        projectRoot: context.projectRoot,
+        locales: config.locales,
+        legacyTranslations: readLegacyTranslations(context.config),
+      });
 
       return [
         {
@@ -25,7 +31,7 @@ export const expoLocalizationModule: ModuleDefinition<ExpoLocalizationModuleConf
           files: buildLocalizationWriteFiles({
             defaultLocale: config.defaultLocale,
             locales: config.locales,
-            translations: config.translations,
+            translations,
           }),
         },
         {
@@ -70,3 +76,11 @@ export const expoLocalizationModule: ModuleDefinition<ExpoLocalizationModuleConf
       ];
     },
   });
+
+function readLegacyTranslations(config: unknown): unknown {
+  return isRecord(config) ? config.translations : undefined;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
