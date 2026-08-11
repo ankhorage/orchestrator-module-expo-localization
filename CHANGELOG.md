@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.5.2
+
+### Patch Changes
+
+- 7c05e2e: Keep the optional Localization admin view browser-safe by separating its module identifier from the server-side module definition dependency graph.
+
 ## 0.5.1
 
 ### Patch Changes
