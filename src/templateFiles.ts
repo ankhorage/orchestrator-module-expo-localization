@@ -20,24 +20,24 @@ export function buildLocalizationWriteFiles(args: {
 
   return [
     {
-      path: 'src/plugins/localization/i18n.ts',
+      path: 'src/modules/localization/i18n.ts',
       content: renderTemplate('i18n.ts.tpl', {
         DEFAULT_LOCALE: JSON.stringify(defaultLocale),
       }),
       overwrite: true,
     },
     {
-      path: 'src/plugins/localization/useT.ts',
+      path: 'src/modules/localization/useT.ts',
       content: readTemplate('useT.ts.tpl'),
       overwrite: true,
     },
     {
-      path: 'src/plugins/localization/runtimeLocalization.ts',
+      path: 'src/modules/localization/runtimeLocalization.ts',
       content: readTemplate('runtimeLocalization.ts.tpl'),
       overwrite: true,
     },
     {
-      path: 'src/plugins/localization/LocalizationProvider.tsx',
+      path: 'src/modules/localization/LocalizationProvider.tsx',
       content: renderTemplate('LocalizationProvider.tsx.tpl', {
         DEFAULT_LOCALE: JSON.stringify(defaultLocale),
         RESOURCE_LINES: locales
@@ -50,7 +50,7 @@ export function buildLocalizationWriteFiles(args: {
       overwrite: true,
     },
     {
-      path: 'src/plugins/localization/index.ts',
+      path: 'src/modules/localization/index.ts',
       content: readTemplate('index.ts.tpl'),
       overwrite: true,
     },
@@ -68,7 +68,7 @@ function buildLocaleJsonFiles(
       (locale.startsWith('de') ? defaultTranslations.de : defaultTranslations.en);
 
     return {
-      path: `src/plugins/localization/locales/${locale}.json`,
+      path: `src/modules/localization/locales/${locale}.json`,
       content: `${JSON.stringify(contentSource, null, 2)}\n`,
     };
   });

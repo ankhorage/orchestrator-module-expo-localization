@@ -10,13 +10,13 @@ import {
   createLocalizationNodePropsResolver,
 } from "./runtimeLocalization";
 
-export interface LocalizationPluginConfig {
+export interface LocalizationModuleConfig {
   defaultLocale?: string;
 }
 
-export function LocalizationPluginProvider(props: {
+export function LocalizationModuleProvider(props: {
   children: React.ReactNode;
-  config?: LocalizationPluginConfig;
+  config?: LocalizationModuleConfig;
 }) {
   const { children, config } = props;
 

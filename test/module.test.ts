@@ -43,6 +43,8 @@ describe('expoLocalizationModule', () => {
       'patch-text-block',
       'json-set',
     ]);
+    expect(JSON.stringify(actions)).not.toContain('src/plugins/');
+    expect(JSON.stringify(actions)).not.toContain('LocalizationPluginProvider');
 
     expect(actions[0]).toEqual({
       type: 'ensure-packages',
@@ -61,21 +63,21 @@ describe('expoLocalizationModule', () => {
     }
 
     expect(writeFilesAction.files.map((file) => file.path)).toEqual([
-      'src/plugins/localization/i18n.ts',
-      'src/plugins/localization/useT.ts',
-      'src/plugins/localization/runtimeLocalization.ts',
-      'src/plugins/localization/LocalizationProvider.tsx',
-      'src/plugins/localization/index.ts',
-      'src/plugins/localization/locales/en.json',
+      'src/modules/localization/i18n.ts',
+      'src/modules/localization/useT.ts',
+      'src/modules/localization/runtimeLocalization.ts',
+      'src/modules/localization/LocalizationProvider.tsx',
+      'src/modules/localization/index.ts',
+      'src/modules/localization/locales/en.json',
     ]);
     const providerFile = writeFilesAction.files.find(
-      (file) => file.path === 'src/plugins/localization/LocalizationProvider.tsx',
+      (file) => file.path === 'src/modules/localization/LocalizationProvider.tsx',
     );
     if (!providerFile) {
       throw new Error('expected LocalizationProvider.tsx file');
     }
     const runtimeFile = writeFilesAction.files.find(
-      (file) => file.path === 'src/plugins/localization/runtimeLocalization.ts',
+      (file) => file.path === 'src/modules/localization/runtimeLocalization.ts',
     );
     if (!runtimeFile) {
       throw new Error('expected runtimeLocalization.ts file');
@@ -93,12 +95,14 @@ describe('expoLocalizationModule', () => {
     expect(providerFile.content).toContain(
       '      "en": { translation: require("./locales/en.json") },',
     );
+    expect(providerFile.content).toContain('LocalizationModuleProvider');
+    expect(providerFile.content).not.toContain('PluginProvider');
 
     expect(actions[2]).toEqual({
       type: 'patch-text-block',
       path: 'src/app/_layout.tsx',
       blockId: 'expo-localization:root-layout-import',
-      content: 'import { LocalizationPluginProvider } from "@/plugins/localization";',
+      content: 'import { LocalizationModuleProvider } from "@/modules/localization";',
       anchor: {
         find: "import ankhConfig from '@root/ankh.config.json';",
         position: 'before',
@@ -109,7 +113,7 @@ describe('expoLocalizationModule', () => {
       type: 'patch-text-block',
       path: 'src/app/_layout.tsx',
       blockId: 'expo-localization:root-layout-provider',
-      content: '  output = <LocalizationPluginProvider>{output}</LocalizationPluginProvider>;',
+      content: '  output = <LocalizationModuleProvider>{output}</LocalizationModuleProvider>;',
       anchor: {
         find: '  return (',
         position: 'before',
@@ -162,11 +166,11 @@ describe('expoLocalizationModule', () => {
     }
 
     expect(writeFilesAction.files.map((file) => file.path)).toContain(
-      'src/plugins/localization/locales/de.json',
+      'src/modules/localization/locales/de.json',
     );
     expect(writeFilesAction.files[0]?.content).toContain('fallbackLng: "de"');
     const providerFile = writeFilesAction.files.find(
-      (file) => file.path === 'src/plugins/localization/LocalizationProvider.tsx',
+      (file) => file.path === 'src/modules/localization/LocalizationProvider.tsx',
     );
     if (!providerFile) {
       throw new Error('expected LocalizationProvider.tsx file');
@@ -177,10 +181,10 @@ describe('expoLocalizationModule', () => {
     );
     expect(
       writeFilesAction.files.find(
-        (file) => file.path === 'src/plugins/localization/locales/de.json',
+        (file) => file.path === 'src/modules/localization/locales/de.json',
       ),
     ).toEqual({
-      path: 'src/plugins/localization/locales/de.json',
+      path: 'src/modules/localization/locales/de.json',
       content: '{\n  "hello": "Hallo dort"\n}\n',
     });
   });
