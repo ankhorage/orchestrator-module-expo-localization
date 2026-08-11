@@ -22,6 +22,10 @@ describe('expo localization host contribution', () => {
       'locales',
     ]);
     expect(expoLocalizationHostContribution.adminRuntime.kind).toBe('module-admin-runtime');
+    expect(Object.keys(expoLocalizationHostContribution.adminRuntime).sort()).toEqual([
+      'execute',
+      'kind',
+    ]);
   });
 
   test('keeps root standalone and host runtime free of Studio, ZORA, React, and ledger internals', async () => {
