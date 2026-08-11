@@ -1,6 +1,7 @@
 import { expoLocalizationAdminRuntime } from './admin/runtime';
 import { parseExpoLocalizationModuleConfig } from './config';
-import { EXPO_LOCALIZATION_MODULE_ID, expoLocalizationModule } from './module';
+import { EXPO_LOCALIZATION_MODULE_ID } from './id';
+import { expoLocalizationModule } from './module';
 
 export { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from './admin/operations';
 export {
