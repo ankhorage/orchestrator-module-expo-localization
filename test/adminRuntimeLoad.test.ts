@@ -4,7 +4,12 @@ import path from 'node:path';
 
 import { describe, expect, test } from 'bun:test';
 
-import { type ExpoLocalizationAdminHostContext, expoLocalizationAdminRuntime } from '../src/host';
+import {
+  EXPO_LOCALIZATION_ADMIN_OPERATIONS,
+  type ExpoLocalizationAdminHostContext,
+  expoLocalizationAdminRuntime,
+  type ExpoLocalizationAdminSnapshot,
+} from '../src/host';
 import { writeExpoLocalizationDictionary } from '../src/resources';
 
 describe('localization admin authoring state', () => {
@@ -24,12 +29,14 @@ describe('localization admin authoring state', () => {
         mutateManifestField: () => Promise.reject(new Error('unexpected mutation')),
       };
 
-      const snapshot = await expoLocalizationAdminRuntime.load(context, {
-        filter: 'missing-translations',
+      const result = await expoLocalizationAdminRuntime.execute(context, {
+        operation: EXPO_LOCALIZATION_ADMIN_OPERATIONS.load,
+        input: { filter: 'missing-translations' },
       });
-      expect(snapshot.fields.map(({ nodeId }) => nodeId)).toEqual(['title', 'subtitle']);
-      expect(snapshot.visibleFields.map(({ nodeId }) => nodeId)).toEqual(['title']);
-      expect(snapshot.missingTranslations).toEqual([
+      if (!isAdminSnapshot(result)) throw new Error('expected localization admin snapshot');
+      expect(result.fields.map(({ nodeId }) => nodeId)).toEqual(['title', 'subtitle']);
+      expect(result.visibleFields.map(({ nodeId }) => nodeId)).toEqual(['title']);
+      expect(result.missingTranslations).toEqual([
         { key: 'home.title', missingLocales: ['de'], fieldCount: 1 },
       ]);
     } finally {
@@ -37,6 +44,10 @@ describe('localization admin authoring state', () => {
     }
   });
 });
+
+function isAdminSnapshot(value: unknown): value is ExpoLocalizationAdminSnapshot {
+  return typeof value === 'object' && value !== null && 'fields' in value && 'visibleFields' in value;
+}
 
 const AUTHORING_CONTEXT = {
   screens: [
