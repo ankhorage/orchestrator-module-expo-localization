@@ -32,7 +32,7 @@ export const expoLocalizationModule: ModuleDefinition<ExpoLocalizationModuleConf
           type: 'patch-text-block',
           path: 'src/app/_layout.tsx',
           blockId: `${EXPO_LOCALIZATION_MODULE_ID}:root-layout-import`,
-          content: 'import { LocalizationPluginProvider } from "@/plugins/localization";',
+          content: 'import { LocalizationModuleProvider } from "@/modules/localization";',
           anchor: {
             find: "import ankhConfig from '@root/ankh.config.json';",
             position: 'before',
@@ -42,7 +42,7 @@ export const expoLocalizationModule: ModuleDefinition<ExpoLocalizationModuleConf
           type: 'patch-text-block',
           path: 'src/app/_layout.tsx',
           blockId: `${EXPO_LOCALIZATION_MODULE_ID}:root-layout-provider`,
-          content: '  output = <LocalizationPluginProvider>{output}</LocalizationPluginProvider>;',
+          content: '  output = <LocalizationModuleProvider>{output}</LocalizationModuleProvider>;',
           anchor: {
             find: '  return (',
             position: 'before',
