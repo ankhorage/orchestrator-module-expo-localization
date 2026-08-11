@@ -63,6 +63,23 @@ from module-owned domain APIs. The link operation validates eligibility from inj
 metadata and uses the generic manifest mutation callback; new keys are seeded in the configured
 default-locale dictionary without overwriting an existing translation.
 
+## Optional admin view
+
+React/ZORA authoring hosts can render the package-owned administration surface from the optional
+`./admin-view` subpath. The view receives only an opaque executor and an optional project-change
+callback; Localization operation IDs and result semantics remain inside this package.
+
+```ts
+import {
+  ExpoLocalizationAdminView,
+  expoLocalizationAdminViewContribution,
+} from '@ankhorage/orchestrator-module-expo-localization/admin-view';
+```
+
+The view covers locale/default-locale management, canonical dictionary create/update/delete,
+metadata-driven translatable-field search/filtering and linking, and missing-translation state. React
+and ZORA are optional peer dependencies and are not dependencies of the root or `./host` entrypoints.
+
 ## Why this exists
 
 Standardizes localization setup across apps.

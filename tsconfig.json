@@ -5,6 +5,7 @@
     "lib": ["ES2022"],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "jsx": "react-jsx",
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": false,
@@ -15,10 +16,10 @@
     "sourceMap": true,
     "verbatimModuleSyntax": true,
     "resolveJsonModule": true,
-    "types": ["node", "bun"],
+    "types": ["node", "bun", "react"],
     "rootDir": "src",
     "outDir": "dist"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["dist", "node_modules", "coverage"]
 }

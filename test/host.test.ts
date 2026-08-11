@@ -28,7 +28,7 @@ describe('expo localization host contribution', () => {
     ]);
   });
 
-  test('keeps root standalone and host runtime free of Studio, ZORA, React, and ledger internals', async () => {
+  test('keeps root and headless host free of Studio and UI dependencies', async () => {
     const packageJson: unknown = JSON.parse(
       await readFile(join(process.cwd(), 'package.json'), 'utf8'),
     );
@@ -45,11 +45,13 @@ describe('expo localization host contribution', () => {
     );
     const source = adminSources.join('\n');
 
-    expect(Object.keys(packageJson.exports ?? {})).toEqual(['.', './host']);
+    expect(Object.keys(packageJson.exports ?? {})).toEqual(['.', './host', './admin-view']);
     expect(packageJson.dependencies?.['@ankhorage/orchestrator']).toBe('^0.3.1');
     expect(packageJson.dependencies?.['@ankhorage/studio']).toBeUndefined();
     expect(packageJson.dependencies?.['@ankhorage/zora']).toBeUndefined();
     expect(packageJson.dependencies?.react).toBeUndefined();
+    expect(packageJson.peerDependenciesMeta?.['@ankhorage/zora']?.optional).toBe(true);
+    expect(packageJson.peerDependenciesMeta?.react?.optional).toBe(true);
     expect(source).not.toContain('@ankhorage/studio');
     expect(source).not.toContain('@ankhorage/zora');
     expect(source).not.toContain('StudioProvider');
@@ -61,6 +63,7 @@ describe('expo localization host contribution', () => {
 function isPackageJson(value: unknown): value is {
   readonly dependencies?: Readonly<Record<string, string>>;
   readonly exports?: Readonly<Record<string, unknown>>;
+  readonly peerDependenciesMeta?: Readonly<Record<string, { readonly optional?: boolean }>>;
 } {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
