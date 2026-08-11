@@ -5,6 +5,7 @@ import path from 'node:path';
 import { describe, expect, test } from 'bun:test';
 
 import {
+  EXPO_LOCALIZATION_ADMIN_OPERATIONS,
   type ExpoLocalizationAdminHostContext,
   expoLocalizationAdminRuntime,
   type ExpoLocalizationManifestFieldMutation,
@@ -21,11 +22,14 @@ describe('localization admin translation linking', () => {
     });
 
     try {
-      const result = await expoLocalizationAdminRuntime.linkTranslationKey(context, {
-        screenId: 'home',
-        nodeId: 'title',
-        keyProp: 'i18nKey',
-        key: ' home.title ',
+      const result = await expoLocalizationAdminRuntime.execute(context, {
+        operation: EXPO_LOCALIZATION_ADMIN_OPERATIONS.linkTranslationKey,
+        input: {
+          screenId: 'home',
+          nodeId: 'title',
+          keyProp: 'i18nKey',
+          key: ' home.title ',
+        },
       });
       expect(result).toEqual({ key: 'home.title', defaultLocale: 'en' });
       expect(mutations).toEqual([
@@ -51,11 +55,14 @@ describe('localization admin translation linking', () => {
     try {
       let failure: unknown;
       try {
-        await expoLocalizationAdminRuntime.linkTranslationKey(context, {
-          screenId: 'home',
-          nodeId: 'unknown',
-          keyProp: 'i18nKey',
-          key: 'home.unknown',
+        await expoLocalizationAdminRuntime.execute(context, {
+          operation: EXPO_LOCALIZATION_ADMIN_OPERATIONS.linkTranslationKey,
+          input: {
+            screenId: 'home',
+            nodeId: 'unknown',
+            keyProp: 'i18nKey',
+            key: 'home.unknown',
+          },
         });
       } catch (error) {
         failure = error;
