@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.5.0
+
+### Minor Changes
+
+- ba14722: Add the optional package-owned React/ZORA Localization administration view for locale management, canonical dictionary editing, metadata-driven field linking, and missing-translation authoring through the opaque module admin runtime contract.
+
 ## 0.4.0
 
 ### Minor Changes
