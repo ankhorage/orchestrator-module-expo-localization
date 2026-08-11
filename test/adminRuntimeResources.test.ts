@@ -4,7 +4,11 @@ import path from 'node:path';
 
 import { describe, expect, test } from 'bun:test';
 
-import { type ExpoLocalizationAdminHostContext, expoLocalizationAdminRuntime } from '../src/host';
+import {
+  EXPO_LOCALIZATION_ADMIN_OPERATIONS,
+  type ExpoLocalizationAdminHostContext,
+  expoLocalizationAdminRuntime,
+} from '../src/host';
 import { readExpoLocalizationDictionary } from '../src/resources';
 
 describe('localization admin dictionary operations', () => {
@@ -23,17 +27,16 @@ describe('localization admin dictionary operations', () => {
     };
 
     try {
-      await expoLocalizationAdminRuntime.dictionaries.setTranslation(context, {
-        locale: 'en',
-        key: 'home.title',
-        value: 'Welcome',
+      await expoLocalizationAdminRuntime.execute(context, {
+        operation: EXPO_LOCALIZATION_ADMIN_OPERATIONS.setTranslation,
+        input: { locale: 'en', key: 'home.title', value: 'Welcome' },
       });
       expect(await readExpoLocalizationDictionary({ projectRoot, locale: 'en' })).toEqual({
         'home.title': 'Welcome',
       });
-      await expoLocalizationAdminRuntime.dictionaries.deleteTranslation(context, {
-        locale: 'en',
-        key: 'home.title',
+      await expoLocalizationAdminRuntime.execute(context, {
+        operation: EXPO_LOCALIZATION_ADMIN_OPERATIONS.deleteTranslation,
+        input: { locale: 'en', key: 'home.title' },
       });
       expect(await readExpoLocalizationDictionary({ projectRoot, locale: 'en' })).toEqual({});
       expect(reconfigureCount).toBe(0);
