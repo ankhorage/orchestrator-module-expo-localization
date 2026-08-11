@@ -24,7 +24,7 @@ export const expoLocalizationAdminRuntime = {
   execute: executeExpoLocalizationAdminOperation,
 } as const;
 
-export async function executeExpoLocalizationAdminOperation(
+async function executeExpoLocalizationAdminOperation(
   context: ExpoLocalizationAdminHostContext,
   invocation: ExpoLocalizationAdminInvocation,
 ): Promise<unknown> {
