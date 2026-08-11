@@ -21,7 +21,7 @@ export function TranslatableFieldRow({ field, missingLocales, busy, run }: Trans
 
   return (
     <Stack gap={6}>
-      <Text weight="semibold">{field.path}</Text>
+      <Text weight="semiBold">{field.path}</Text>
       <Text color="neutral" emphasis="muted" variant="caption">
         {field.defaultText || 'No default text'}
       </Text>
