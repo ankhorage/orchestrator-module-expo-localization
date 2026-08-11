@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/runtime';
+import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/operations';
 import type {
   ExpoLocalizationAdminLoadOptions,
   ExpoLocalizationAdminSnapshot,

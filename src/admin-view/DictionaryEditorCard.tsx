@@ -1,8 +1,8 @@
 import { Button, Card, Input, Select, Stack } from '@ankhorage/zora';
 import { useEffect, useMemo, useState } from 'react';
 
+import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/operations';
 import type { ExpoLocalizationAdminSnapshot } from '../admin/types';
-import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/runtime';
 
 interface DictionaryEditorCardProps {
   readonly snapshot: ExpoLocalizationAdminSnapshot;

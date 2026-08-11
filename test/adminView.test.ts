@@ -8,15 +8,23 @@ import { readExpoLocalizationAdminSnapshot } from '../src/admin-view/readSnapsho
 describe('localization admin view', () => {
   test('registers a package-owned view without Studio knowledge', async () => {
     const entrypoint = await readFile(join(process.cwd(), 'src/admin-view/index.ts'), 'utf8');
-    const files = await Promise.all(
-      ['ExpoLocalizationAdminView.tsx', 'useLocalizationAdmin.ts', 'types.ts'].map((file) =>
-        readFile(join(process.cwd(), 'src/admin-view', file), 'utf8'),
-      ),
-    );
+    const files = await readAdminViewSources();
 
     expect(entrypoint).toContain('id: EXPO_LOCALIZATION_MODULE_ID');
     expect(entrypoint).toContain('View: ExpoLocalizationAdminView');
-    expect(files.join('\n')).not.toContain('@ankhorage/studio');
+    expect(files).not.toContain('@ankhorage/studio');
+  });
+
+  test('keeps browser UI imports out of the server runtime graph', async () => {
+    const files = await readAdminViewSources();
+    const operations = await readFile(join(process.cwd(), 'src/admin/operations.ts'), 'utf8');
+
+    expect(files).not.toContain('../admin/runtime');
+    expect(files).toContain('../admin/operations');
+    expect(operations).not.toContain('node:');
+    expect(operations).not.toContain('./dictionaryOperations');
+    expect(operations).not.toContain('./configOperations');
+    expect(operations).not.toContain('./load');
   });
 
   test('validates opaque runtime snapshots before rendering them', () => {
@@ -43,3 +51,22 @@ describe('localization admin view', () => {
     ).toThrow("Dictionary 'en' is invalid.");
   });
 });
+
+async function readAdminViewSources(): Promise<string> {
+  const names = [
+    'DictionaryEditorCard.tsx',
+    'ExpoLocalizationAdminView.tsx',
+    'LocaleManagementCard.tsx',
+    'MissingTranslationsCard.tsx',
+    'TranslatableFieldRow.tsx',
+    'TranslatableFieldsCard.tsx',
+    'readSnapshot.ts',
+    'types.ts',
+    'useLocalizationAdmin.ts',
+  ];
+  return (
+    await Promise.all(
+      names.map((file) => readFile(join(process.cwd(), 'src/admin-view', file), 'utf8')),
+    )
+  ).join('\n');
+}
