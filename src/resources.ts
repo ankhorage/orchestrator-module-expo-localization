@@ -50,8 +50,9 @@ export async function writeExpoLocalizationDictionary(args: {
   readonly locale: string;
   readonly dictionary: Readonly<Record<string, string>>;
 }): Promise<ExpoLocalizationDictionary> {
+  const locale = normalizeExpoLocalizationLocale(args.locale);
   const dictionary = normalizeDictionary(args.dictionary);
-  const dictionaryPath = resolveExpoLocalizationDictionaryPath(args);
+  const dictionaryPath = resolveExpoLocalizationDictionaryPath({ ...args, locale });
   const temporaryPath = `${dictionaryPath}.${process.pid}.${crypto.randomUUID()}.tmp`;
   await mkdir(path.dirname(dictionaryPath), { recursive: true });
 
@@ -61,11 +62,12 @@ export async function writeExpoLocalizationDictionary(args: {
   } catch (error) {
     await rm(temporaryPath, { force: true }).catch(() => undefined);
     throw new ExpoLocalizationResourceError(
-      `Could not persist the ${JSON.stringify(normalizeExpoLocalizationLocale(args.locale))} localization dictionary.`,
+      `Could not persist the ${JSON.stringify(locale)} localization dictionary.`,
       { cause: error },
     );
   }
 
+  await removeLegacyDictionaryAliases({ projectRoot: args.projectRoot, locale, dictionaryPath });
   return dictionary;
 }
 
@@ -153,6 +155,7 @@ async function readDictionaryIfPresent(args: {
     );
   }
   if (!dictionaryPath) return null;
+
   let content: string;
   try {
     content = await readFile(dictionaryPath, 'utf8');
@@ -189,20 +192,59 @@ async function resolveExistingDictionaryPath(args: {
   }
 
   const resourceDirectory = path.resolve(args.projectRoot, EXPO_LOCALIZATION_RESOURCE_DIRECTORY);
-  let entries: string[];
+  const entries = await readResourceDirectory(resourceDirectory);
+  if (!entries) return null;
+
+  const locale = normalizeExpoLocalizationLocale(args.locale);
+  const legacyFiles = findLocaleAliases(entries, locale, path.basename(canonicalPath));
+  if (legacyFiles.length > 1) {
+    throw new Error(
+      `Multiple localization dictionaries normalize to ${JSON.stringify(locale)}: ${legacyFiles.join(', ')}.`,
+    );
+  }
+  return legacyFiles[0] ? path.resolve(resourceDirectory, legacyFiles[0]) : null;
+}
+
+async function removeLegacyDictionaryAliases(args: {
+  readonly projectRoot: string;
+  readonly locale: string;
+  readonly dictionaryPath: string;
+}): Promise<void> {
+  const resourceDirectory = path.resolve(args.projectRoot, EXPO_LOCALIZATION_RESOURCE_DIRECTORY);
+  const entries = await readResourceDirectory(resourceDirectory);
+  if (!entries) return;
+
+  const aliases = findLocaleAliases(entries, args.locale, path.basename(args.dictionaryPath));
   try {
-    entries = await readdir(resourceDirectory);
+    for (const alias of aliases) {
+      await rm(path.resolve(resourceDirectory, alias), { force: true });
+    }
+  } catch (error) {
+    throw new ExpoLocalizationResourceError(
+      `Could not remove legacy aliases for ${JSON.stringify(args.locale)}.`,
+      { cause: error },
+    );
+  }
+}
+
+async function readResourceDirectory(resourceDirectory: string): Promise<string[] | null> {
+  try {
+    return await readdir(resourceDirectory);
   } catch (error) {
     if (isNotFoundError(error)) return null;
     throw error;
   }
+}
 
-  const locale = normalizeExpoLocalizationLocale(args.locale);
-  const legacyFile = entries
-    .filter((entry) => entry.endsWith('.json'))
-    .sort(compareText)
-    .find((entry) => tryNormalizeLocale(entry.slice(0, -'.json'.length)) === locale);
-  return legacyFile ? path.resolve(resourceDirectory, legacyFile) : null;
+function findLocaleAliases(
+  entries: readonly string[],
+  locale: string,
+  canonicalFileName: string,
+): string[] {
+  return entries
+    .filter((entry) => entry !== canonicalFileName && entry.endsWith('.json'))
+    .filter((entry) => tryNormalizeLocale(entry.slice(0, -'.json'.length)) === locale)
+    .sort(compareText);
 }
 
 function parseDictionaries(input: unknown): ExpoLocalizationDictionaries {

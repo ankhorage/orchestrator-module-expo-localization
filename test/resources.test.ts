@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -104,15 +104,47 @@ describe('expo localization dictionary resources', () => {
     });
   });
 
-  test('reads underscore locale files during canonical BCP-47 migration', async () => {
+  test('canonicalizes an underscore locale file on the first dictionary mutation', async () => {
     await withProject(async (projectRoot) => {
-      const dictionaryPath = path.join(projectRoot, 'src/modules/localization/locales/pt_BR.json');
-      mkdirSync(path.dirname(dictionaryPath), { recursive: true });
-      writeFileSync(dictionaryPath, '{"hello":"Olá"}\n', 'utf8');
+      const legacyPath = path.join(projectRoot, 'src/modules/localization/locales/pt_BR.json');
+      const canonicalPath = resolveExpoLocalizationDictionaryPath({
+        projectRoot,
+        locale: 'pt-BR',
+      });
+      mkdirSync(path.dirname(legacyPath), { recursive: true });
+      writeFileSync(legacyPath, '{"hello":"Olá"}\n', 'utf8');
 
       expect(await readExpoLocalizationResourceSeeds({ projectRoot, locales: ['pt-BR'] })).toEqual({
         'pt-BR': { hello: 'Olá' },
       });
+      await setExpoLocalizationTranslation({
+        projectRoot,
+        locale: 'pt-BR',
+        key: 'bye',
+        value: 'Tchau',
+      });
+
+      expect(await readFile(canonicalPath, 'utf8')).toBe(
+        '{\n  "bye": "Tchau",\n  "hello": "Olá"\n}\n',
+      );
+      expect(existsSync(legacyPath)).toBe(false);
+    });
+  });
+
+  test('rejects ambiguous legacy aliases instead of guessing a dictionary', async () => {
+    await withProject(async (projectRoot) => {
+      const directory = path.join(projectRoot, 'src/modules/localization/locales');
+      mkdirSync(directory, { recursive: true });
+      writeFileSync(path.join(directory, 'pt_BR.json'), '{"hello":"Olá"}\n', 'utf8');
+      writeFileSync(path.join(directory, 'pt-br.json'), '{"hello":"Oi"}\n', 'utf8');
+
+      let error: unknown;
+      try {
+        await readExpoLocalizationDictionary({ projectRoot, locale: 'pt-BR' });
+      } catch (caught) {
+        error = caught;
+      }
+      expect(error).toBeInstanceOf(ExpoLocalizationResourceError);
     });
   });
 

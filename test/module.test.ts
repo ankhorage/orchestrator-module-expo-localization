@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url';
 import type { WriteFilesAction } from '@ankhorage/orchestrator';
 import { describe, expect, test } from 'bun:test';
 
-import type { ExpoLocalizationModuleConfig } from '../src/config';
 import { EXPO_LOCALIZATION_MODULE_ID, expoLocalizationModule } from '../src/module';
 import { writeExpoLocalizationDictionary } from '../src/resources';
 
@@ -147,20 +146,19 @@ describe('expoLocalizationModule', () => {
   });
 
   test('migrates legacy ledger translations into canonical resource files', async () => {
+    const legacyConfig = {
+      defaultLocale: 'de',
+      locales: ['en', 'de'],
+      translations: {
+        en: { hello: 'Hello there' },
+        de: { hello: 'Hallo dort' },
+      },
+    };
     const actions = await Promise.resolve(
       expoLocalizationModule.plan({
         projectRoot: '/virtual/project',
         moduleId: EXPO_LOCALIZATION_MODULE_ID,
-        config: {
-          defaultLocale: 'de',
-          locales: ['en', 'de'],
-          translations: {
-            en: { hello: 'Hello there' },
-            de: { hello: 'Hallo dort' },
-          },
-        } as ExpoLocalizationModuleConfig & {
-          translations: Record<string, Record<string, string>>;
-        },
+        config: legacyConfig,
       }),
     );
 

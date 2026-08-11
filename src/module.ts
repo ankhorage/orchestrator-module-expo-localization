@@ -78,6 +78,9 @@ export const expoLocalizationModule: ModuleDefinition<ExpoLocalizationModuleConf
   });
 
 function readLegacyTranslations(config: unknown): unknown {
-  if (typeof config !== 'object' || config === null || Array.isArray(config)) return undefined;
-  return (config as Record<string, unknown>).translations;
+  return isRecord(config) ? config.translations : undefined;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }

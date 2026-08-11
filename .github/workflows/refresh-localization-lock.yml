@@ -1,0 +1,39 @@
+name: Refresh localization lockfile
+
+on:
+  push:
+    branches:
+      - 'issue#126/localization-domain'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-lock:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: 'issue#126/localization-domain'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.13'
+
+      - name: Refresh lockfile
+        run: bun install
+
+      - name: Commit lockfile
+        run: |
+          if git diff --quiet -- bun.lock; then
+            echo 'bun.lock already current.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add bun.lock
+          git commit -m 'Update Bun lockfile for Orchestrator 0.3.1'
+          git push origin HEAD:'issue#126/localization-domain'
