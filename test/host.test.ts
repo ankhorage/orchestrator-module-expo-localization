@@ -34,9 +34,14 @@ describe('expo localization host contribution', () => {
     );
     if (!isPackageJson(packageJson)) throw new Error('invalid package.json');
     const adminSources = await Promise.all(
-      ['types.ts', 'load.ts', 'configOperations.ts', 'dictionaryOperations.ts', 'linkTranslationKey.ts', 'runtime.ts'].map(
-        (file) => readFile(join(process.cwd(), 'src/admin', file), 'utf8'),
-      ),
+      [
+        'types.ts',
+        'load.ts',
+        'configOperations.ts',
+        'dictionaryOperations.ts',
+        'linkTranslationKey.ts',
+        'runtime.ts',
+      ].map((file) => readFile(join(process.cwd(), 'src/admin', file), 'utf8')),
     );
     const source = adminSources.join('\n');
 

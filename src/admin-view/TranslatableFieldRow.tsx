@@ -12,8 +12,15 @@ interface TranslatableFieldRowProps {
   readonly run: (operation: string, input?: unknown) => Promise<void>;
 }
 
-export function TranslatableFieldRow({ field, missingLocales, busy, run }: TranslatableFieldRowProps) {
-  const [key, setKey] = useState(field.currentKey || createExpoLocalizationKeyFromText(field.defaultText));
+export function TranslatableFieldRow({
+  field,
+  missingLocales,
+  busy,
+  run,
+}: TranslatableFieldRowProps) {
+  const [key, setKey] = useState(
+    field.currentKey || createExpoLocalizationKeyFromText(field.defaultText),
+  );
 
   useEffect(() => {
     setKey(field.currentKey || createExpoLocalizationKeyFromText(field.defaultText));

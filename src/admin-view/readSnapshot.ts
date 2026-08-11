@@ -1,8 +1,8 @@
+import type { ExpoLocalizationAdminSnapshot } from '../admin/types';
 import type {
   ExpoLocalizationMissingTranslation,
   ExpoLocalizationTranslatableField,
 } from '../authoring';
-import type { ExpoLocalizationAdminSnapshot } from '../admin/types';
 import { parseExpoLocalizationModuleConfig } from '../config';
 import type { ExpoLocalizationDictionaries, ExpoLocalizationDictionary } from '../resources';
 
@@ -45,9 +45,16 @@ function readFields(value: unknown): ExpoLocalizationTranslatableField[] {
 
 function isTranslatableField(value: unknown): value is ExpoLocalizationTranslatableField {
   if (!isRecord(value)) return false;
-  return ['screenId', 'nodeId', 'componentName', 'keyProp', 'defaultTextProp', 'currentKey', 'defaultText', 'path'].every(
-    (key) => typeof value[key] === 'string',
-  );
+  return [
+    'screenId',
+    'nodeId',
+    'componentName',
+    'keyProp',
+    'defaultTextProp',
+    'currentKey',
+    'defaultText',
+    'path',
+  ].every((key) => typeof value[key] === 'string');
 }
 
 function readMissingTranslations(value: unknown): ExpoLocalizationMissingTranslation[] {

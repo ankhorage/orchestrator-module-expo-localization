@@ -14,7 +14,9 @@ export function ExpoLocalizationAdminView(props: ExpoLocalizationAdminViewProps)
     return <Text>Loading localization administration…</Text>;
   }
   if (!admin.snapshot) {
-    return <Text color="danger">{admin.message ?? 'Localization administration is unavailable.'}</Text>;
+    return (
+      <Text color="danger">{admin.message ?? 'Localization administration is unavailable.'}</Text>
+    );
   }
 
   return (

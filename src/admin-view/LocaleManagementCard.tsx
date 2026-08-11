@@ -36,7 +36,9 @@ export function LocaleManagementCard({ snapshot, busy, run }: LocaleManagementCa
                 variant="outline"
                 color="danger"
                 disabled={busy || config.locales.length === 1}
-                onPress={() => void run(EXPO_LOCALIZATION_ADMIN_OPERATIONS.removeLocale, { locale })}
+                onPress={() =>
+                  void run(EXPO_LOCALIZATION_ADMIN_OPERATIONS.removeLocale, { locale })
+                }
               >
                 Remove
               </Button>

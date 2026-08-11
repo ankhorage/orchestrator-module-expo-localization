@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import type { ExpoLocalizationAdminLoadOptions, ExpoLocalizationAdminSnapshot } from '../admin/types';
 import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/runtime';
+import type {
+  ExpoLocalizationAdminLoadOptions,
+  ExpoLocalizationAdminSnapshot,
+} from '../admin/types';
 import { readExpoLocalizationAdminSnapshot } from './readSnapshot';
 import type { ExpoLocalizationAdminViewProps } from './types';
 

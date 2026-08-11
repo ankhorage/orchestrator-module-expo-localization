@@ -32,7 +32,10 @@ export function TranslatableFieldsCard(props: TranslatableFieldsCardProps) {
   useEffect(() => setFilter(props.options.filter ?? 'all'), [props.options.filter]);
 
   return (
-    <Card title="Translatable fields" description="Discover and link fields from component metadata.">
+    <Card
+      title="Translatable fields"
+      description="Discover and link fields from component metadata."
+    >
       <Stack gap={10}>
         <Stack direction="row" gap={8} align="center">
           <Input
@@ -50,7 +53,9 @@ export function TranslatableFieldsCard(props: TranslatableFieldsCardProps) {
           </Button>
         </Stack>
         {props.snapshot.visibleFields.length === 0 ? (
-          <Text color="neutral" emphasis="muted">No matching translatable fields.</Text>
+          <Text color="neutral" emphasis="muted">
+            No matching translatable fields.
+          </Text>
         ) : (
           props.snapshot.visibleFields.map((field) => (
             <TranslatableFieldRow
