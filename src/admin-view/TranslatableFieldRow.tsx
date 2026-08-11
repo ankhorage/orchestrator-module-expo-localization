@@ -1,9 +1,9 @@
 import { Button, Input, Stack, Text } from '@ankhorage/zora';
 import { useEffect, useState } from 'react';
 
+import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/operations';
 import type { ExpoLocalizationTranslatableField } from '../authoring';
 import { createExpoLocalizationKeyFromText } from '../authoring';
-import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/runtime';
 
 interface TranslatableFieldRowProps {
   readonly field: ExpoLocalizationTranslatableField;
