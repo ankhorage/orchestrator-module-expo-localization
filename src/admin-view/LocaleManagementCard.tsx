@@ -18,32 +18,14 @@ export function LocaleManagementCard({ snapshot, busy, run }: LocaleManagementCa
     <Card title="Locales" description="Configure supported locales and the default locale.">
       <Stack gap={8}>
         {config.locales.map((locale) => (
-          <Stack key={locale} direction="row" gap={8} align="center" justify="space-between">
-            <Text>{locale === config.defaultLocale ? `${locale} (default)` : locale}</Text>
-            <Stack direction="row" gap={8}>
-              {locale !== config.defaultLocale ? (
-                <Button
-                  variant="outline"
-                  disabled={busy}
-                  onPress={() =>
-                    void run(EXPO_LOCALIZATION_ADMIN_OPERATIONS.setDefaultLocale, { locale })
-                  }
-                >
-                  Make default
-                </Button>
-              ) : null}
-              <Button
-                variant="outline"
-                color="danger"
-                disabled={busy || config.locales.length === 1}
-                onPress={() =>
-                  void run(EXPO_LOCALIZATION_ADMIN_OPERATIONS.removeLocale, { locale })
-                }
-              >
-                Remove
-              </Button>
-            </Stack>
-          </Stack>
+          <LocaleRow
+            key={locale}
+            locale={locale}
+            defaultLocale={config.defaultLocale}
+            canRemove={config.locales.length > 1}
+            busy={busy}
+            run={run}
+          />
         ))}
         <Stack direction="row" gap={8} align="center">
           <Input
@@ -66,5 +48,43 @@ export function LocaleManagementCard({ snapshot, busy, run }: LocaleManagementCa
         </Stack>
       </Stack>
     </Card>
+  );
+}
+
+function LocaleRow(props: {
+  readonly locale: string;
+  readonly defaultLocale: string;
+  readonly canRemove: boolean;
+  readonly busy: boolean;
+  readonly run: (operation: string, input?: unknown) => Promise<void>;
+}) {
+  const { locale, defaultLocale, canRemove, busy, run } = props;
+  const isDefault = locale === defaultLocale;
+
+  return (
+    <Stack direction="row" gap={8} align="center" justify="space-between">
+      <Text>{isDefault ? `${locale} (default)` : locale}</Text>
+      <Stack direction="row" gap={8}>
+        {!isDefault ? (
+          <Button
+            variant="outline"
+            disabled={busy}
+            onPress={() =>
+              void run(EXPO_LOCALIZATION_ADMIN_OPERATIONS.setDefaultLocale, { locale })
+            }
+          >
+            Make default
+          </Button>
+        ) : null}
+        <Button
+          variant="outline"
+          color="danger"
+          disabled={busy || !canRemove}
+          onPress={() => void run(EXPO_LOCALIZATION_ADMIN_OPERATIONS.removeLocale, { locale })}
+        >
+          Remove
+        </Button>
+      </Stack>
+    </Stack>
   );
 }

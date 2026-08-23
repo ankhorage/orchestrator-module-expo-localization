@@ -1,5 +1,5 @@
-import { Button, Card, Input, type SelectOption, Select, Stack, Text } from '@ankhorage/zora';
-import { useEffect, useState } from 'react';
+import { Button, Card, Input, Select, type SelectOption, Stack, Text } from '@ankhorage/zora';
+import { useState } from 'react';
 
 import type {
   ExpoLocalizationAdminLoadOptions,
@@ -27,9 +27,6 @@ interface TranslatableFieldsCardProps {
 export function TranslatableFieldsCard(props: TranslatableFieldsCardProps) {
   const [searchQuery, setSearchQuery] = useState(props.options.searchQuery ?? '');
   const [filter, setFilter] = useState<Filter>(props.options.filter ?? 'all');
-
-  useEffect(() => setSearchQuery(props.options.searchQuery ?? ''), [props.options.searchQuery]);
-  useEffect(() => setFilter(props.options.filter ?? 'all'), [props.options.filter]);
 
   return (
     <Card
@@ -59,7 +56,7 @@ export function TranslatableFieldsCard(props: TranslatableFieldsCardProps) {
         ) : (
           props.snapshot.visibleFields.map((field) => (
             <TranslatableFieldRow
-              key={`${field.screenId}:${field.nodeId}:${field.keyProp}`}
+              key={`${field.screenId}:${field.nodeId}:${field.keyProp}:${field.currentKey}:${field.defaultText}`}
               field={field}
               missingLocales={
                 props.snapshot.missingTranslations.find((item) => item.key === field.currentKey)

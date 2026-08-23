@@ -20,11 +20,7 @@ export function LocalizationModuleProvider(props: {
 }) {
   const { children, config } = props;
 
-  const locales = ExpoLocalization.getLocales();
-  const deviceLocale =
-    (locales.length > 0 ? locales[0]?.languageTag : null) ??
-    (ExpoLocalization as { locale?: string }).locale ??
-    __DEFAULT_LOCALE__;
+  const deviceLocale = ExpoLocalization.getLocales()[0].languageTag;
 
   const initialLocale = config?.defaultLocale ?? deviceLocale;
   const [currentLocale, setCurrentLocale] = useState<string>(initialLocale);
