@@ -5,9 +5,10 @@ export async function writeSdk57LocalizationConsumerFixtureAsync(
   consumerRoot: string,
   candidatePath: string,
   platform: PlatformProjection,
+  adminViewDependencies: Readonly<Record<string, string>>,
 ): Promise<void> {
   await Promise.all([
-    writeConsumerPackageAsync(consumerRoot, candidatePath, platform),
+    writeConsumerPackageAsync(consumerRoot, candidatePath, platform, adminViewDependencies),
     writeConsumerConfigAsync(consumerRoot),
     writeConsumerSourceAsync(consumerRoot),
   ]);
@@ -66,6 +67,7 @@ async function writeConsumerPackageAsync(
   consumerRoot: string,
   candidatePath: string,
   platform: PlatformProjection,
+  adminViewDependencies: Readonly<Record<string, string>>,
 ): Promise<void> {
   const platformDependencies = Object.fromEntries(
     [
@@ -83,7 +85,7 @@ async function writeConsumerPackageAsync(
     main: 'expo-router/entry',
     dependencies: {
       ...platformDependencies,
-      '@ankhorage/expo-runtime': '2.7.0',
+      ...adminViewDependencies,
       '@ankhorage/orchestrator': '0.3.1',
       '@ankhorage/orchestrator-module-expo-localization': `file:${candidatePath}`,
       '@ankhorage/runtime': '2.2.0',
@@ -119,9 +121,11 @@ export default function RootLayout() {
   );
   await writeFile(
     path.join(consumerRoot, 'src/app/index.tsx'),
-    `import { Text, View } from 'react-native';
+    `import { expoLocalizationAdminViewContribution } from '@ankhorage/orchestrator-module-expo-localization/admin-view';
+import { Text, View } from 'react-native';
 
 export default function Index() {
+  void expoLocalizationAdminViewContribution;
   return <View><Text>Localization acceptance</Text></View>;
 }
 `,

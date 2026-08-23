@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import { EXPO_PLATFORM } from '@ankhorage/expo-runtime/platform';
 
+import { assertSdk57LocalizationConsumerAsync } from './assertSdk57LocalizationConsumerAsync';
 import { writeSdk57LocalizationConsumerFixtureAsync } from './writeSdk57LocalizationConsumerFixtureAsync';
 
 interface CommandOptions {
@@ -13,6 +14,28 @@ interface CommandOptions {
 
 interface PackedCandidate {
   readonly filename: string;
+  readonly name: string;
+  readonly version: string;
+}
+
+interface PackageManifest {
+  readonly dependencies?: Readonly<Record<string, string>>;
+  readonly name?: string;
+  readonly peerDependencies?: Readonly<Record<string, string>>;
+  readonly version?: string;
+}
+
+interface ExpectedPackageGraph {
+  readonly runtime: PackageIdentity;
+  readonly runtimeRequirement: string;
+  readonly surface: PackageIdentity;
+  readonly zora: PackageIdentity;
+  readonly zoraRequirement: string;
+}
+
+interface PackageIdentity {
+  readonly name: string;
+  readonly version: string;
 }
 
 interface PlatformProjection {
@@ -28,6 +51,7 @@ interface PlatformProjection {
 
 const repositoryRoot = path.resolve(import.meta.dir, '..');
 const scratchRoot = await mkdtemp(path.join(tmpdir(), 'expo-localization-sdk57-'));
+const candidatePackageName = '@ankhorage/orchestrator-module-expo-localization';
 
 try {
   const candidateDirectory = path.join(scratchRoot, 'candidate');
@@ -47,7 +71,34 @@ try {
   );
   const [candidate] = JSON.parse(packOutput) as PackedCandidate[];
   if (!candidate) throw new Error('npm pack did not report a candidate artifact.');
+  if (candidate.name !== candidatePackageName) {
+    throw new Error(`npm pack reported unexpected candidate name: ${candidate.name}.`);
+  }
   const candidatePath = path.join(candidateDirectory, candidate.filename);
+
+  const repositoryPackage = await readPackageManifestAsync(
+    path.join(repositoryRoot, 'package.json'),
+  );
+  const runtimePackage = await readPackageManifestAsync(
+    path.join(repositoryRoot, 'node_modules/@ankhorage/expo-runtime/package.json'),
+  );
+  const surfacePackage = await readPackageManifestAsync(
+    path.join(repositoryRoot, 'node_modules/@ankhorage/surface/package.json'),
+  );
+  const zoraPackage = await readPackageManifestAsync(
+    path.join(repositoryRoot, 'node_modules/@ankhorage/zora/package.json'),
+  );
+  const expectedPackages: ExpectedPackageGraph = {
+    runtime: requirePackageIdentity(runtimePackage, '@ankhorage/expo-runtime'),
+    runtimeRequirement: requireVersion(repositoryPackage.dependencies, '@ankhorage/expo-runtime'),
+    surface: requirePackageIdentity(surfacePackage, '@ankhorage/surface'),
+    zora: requirePackageIdentity(zoraPackage, '@ankhorage/zora'),
+    zoraRequirement: requireVersion(repositoryPackage.peerDependencies, '@ankhorage/zora'),
+  };
+  const adminViewDependencies = {
+    ...zoraPackage.peerDependencies,
+    [expectedPackages.zora.name]: expectedPackages.zoraRequirement,
+  };
 
   const expectedPlatform: PlatformProjection = {
     localization: EXPO_PLATFORM.packages.localization,
@@ -63,7 +114,12 @@ try {
     tooling: { typescript: EXPO_PLATFORM.tooling.typescript },
   };
 
-  await writeSdk57LocalizationConsumerFixtureAsync(consumerRoot, candidatePath, expectedPlatform);
+  await writeSdk57LocalizationConsumerFixtureAsync(
+    consumerRoot,
+    candidatePath,
+    expectedPlatform,
+    adminViewDependencies,
+  );
   await runAsync('bun', ['install'], consumerRoot);
 
   const platform = JSON.parse(
@@ -82,7 +138,12 @@ try {
   }
   await writeApplyScriptAsync(consumerRoot);
   await runAsync('bun', ['apply-module.ts'], consumerRoot);
-  await assertGeneratedConsumerAsync(consumerRoot, platform);
+  await assertSdk57LocalizationConsumerAsync({
+    candidate,
+    consumerRoot,
+    expectedPackages,
+    localization: platform.localization,
+  });
 
   await runAsync('bunx', ['expo', 'install', '--check'], consumerRoot);
   await runAsync('bunx', ['expo-doctor'], consumerRoot);
@@ -108,58 +169,6 @@ try {
   await rm(scratchRoot, { recursive: true, force: true });
 }
 
-async function assertGeneratedConsumerAsync(
-  consumerRoot: string,
-  platform: PlatformProjection,
-): Promise<void> {
-  const candidatePackage = JSON.parse(
-    await readFile(
-      path.join(
-        consumerRoot,
-        'node_modules/@ankhorage/orchestrator-module-expo-localization/package.json',
-      ),
-      'utf8',
-    ),
-  ) as { version?: string };
-  if (candidatePackage.version !== '0.5.2') {
-    throw new Error(`Unexpected packed candidate version: ${String(candidatePackage.version)}.`);
-  }
-
-  const packageJson = JSON.parse(
-    await readFile(path.join(consumerRoot, 'package.json'), 'utf8'),
-  ) as { dependencies?: Record<string, string> };
-  if (packageJson.dependencies?.[platform.localization.name] !== platform.localization.version) {
-    throw new Error('Generated expo-localization requirement does not match EXPO_PLATFORM.');
-  }
-
-  const provider = await readFile(
-    path.join(consumerRoot, 'src/modules/localization/LocalizationProvider.tsx'),
-    'utf8',
-  );
-  const appConfig = await readFile(path.join(consumerRoot, 'app.config.ts'), 'utf8');
-  const germanDictionary = await readFile(
-    path.join(consumerRoot, 'src/modules/localization/locales/de.json'),
-    'utf8',
-  );
-  const activeFiles = `${JSON.stringify(packageJson)}\n${provider}\n${appConfig}`;
-
-  if (!provider.includes('ExpoLocalization.getLocales()[0].languageTag')) {
-    throw new Error('Generated provider does not use the current getLocales() API.');
-  }
-  if (provider.includes('ExpoLocalization as')) {
-    throw new Error('Generated provider retained the obsolete locale property fallback.');
-  }
-  if (!appConfig.includes('supportedLocales: ["en","de"]')) {
-    throw new Error('Generated config plugin does not project configured locales.');
-  }
-  if (!germanDictionary.includes('Hallo')) {
-    throw new Error('Generated German translation resource is missing.');
-  }
-  if (activeFiles.includes('~17.0.8')) {
-    throw new Error('Packed consumer retained historical SDK 54 package truth.');
-  }
-}
-
 async function assertNativeLocalesAsync(consumerRoot: string): Promise<void> {
   const androidLocales = await readFile(
     path.join(consumerRoot, 'android/app/src/main/res/xml/locales_config.xml'),
@@ -178,6 +187,28 @@ async function assertNativeLocalesAsync(consumerRoot: string): Promise<void> {
       throw new Error(`iOS prebuild is missing supported locale ${locale}.`);
     }
   }
+}
+
+async function readPackageManifestAsync(packagePath: string): Promise<PackageManifest> {
+  return JSON.parse(await readFile(packagePath, 'utf8')) as PackageManifest;
+}
+
+function requirePackageIdentity(manifest: PackageManifest, expectedName: string): PackageIdentity {
+  if (manifest.name !== expectedName || typeof manifest.version !== 'string') {
+    throw new Error(`Expected installed released package ${expectedName}.`);
+  }
+  return { name: manifest.name, version: manifest.version };
+}
+
+function requireVersion(
+  versions: Readonly<Record<string, string>> | undefined,
+  packageName: string,
+): string {
+  const version = Reflect.get(versions ?? {}, packageName) as unknown;
+  if (typeof version !== 'string') {
+    throw new Error(`Missing released requirement for ${packageName}.`);
+  }
+  return version;
 }
 
 async function runAsync(
