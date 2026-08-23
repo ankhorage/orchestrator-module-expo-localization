@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from 'react';
 
 import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/operations';
 import type {
@@ -6,7 +6,7 @@ import type {
   ExpoLocalizationAdminSnapshot,
 } from '../admin/types';
 import { readExpoLocalizationAdminSnapshot } from './readSnapshot';
-import type { ExpoLocalizationAdminViewProps } from './types';
+import type { ExpoLocalizationAdminExecutor, ExpoLocalizationAdminViewProps } from './types';
 
 export function useLocalizationAdmin({ execute, onProjectChange }: ExpoLocalizationAdminViewProps) {
   const [snapshot, setSnapshot] = useState<ExpoLocalizationAdminSnapshot | null>(null);
@@ -49,11 +49,46 @@ export function useLocalizationAdmin({ execute, onProjectChange }: ExpoLocalizat
     [execute, onProjectChange, reload],
   );
 
-  useEffect(() => {
-    void reload({});
-  }, [execute]);
+  useInitialLocalizationSnapshot({
+    execute,
+    setSnapshot,
+    setOptions,
+    setMessage,
+    setLoading,
+  });
 
   return { snapshot, options, loading, busy, message, reload, run };
+}
+
+function useInitialLocalizationSnapshot(args: {
+  execute: ExpoLocalizationAdminExecutor;
+  setSnapshot: Dispatch<SetStateAction<ExpoLocalizationAdminSnapshot | null>>;
+  setOptions: Dispatch<SetStateAction<ExpoLocalizationAdminLoadOptions>>;
+  setMessage: Dispatch<SetStateAction<string | null>>;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+}): void {
+  const { execute, setSnapshot, setOptions, setMessage, setLoading } = args;
+
+  useEffect(() => {
+    let active = true;
+    void execute(EXPO_LOCALIZATION_ADMIN_OPERATIONS.load, {})
+      .then((result) => {
+        if (!active) return;
+        setSnapshot(readExpoLocalizationAdminSnapshot(result));
+        setOptions({});
+        setMessage(null);
+      })
+      .catch((error: unknown) => {
+        if (active) setMessage(toMessage(error));
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [execute, setLoading, setMessage, setOptions, setSnapshot]);
 }
 
 function toMessage(error: unknown): string {

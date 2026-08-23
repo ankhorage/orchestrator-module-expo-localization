@@ -23,8 +23,17 @@ export function ExpoLocalizationAdminView(props: ExpoLocalizationAdminViewProps)
     <Stack gap={12}>
       {admin.message ? <Text color="danger">{admin.message}</Text> : null}
       <LocaleManagementCard snapshot={admin.snapshot} busy={admin.busy} run={admin.run} />
-      <DictionaryEditorCard snapshot={admin.snapshot} busy={admin.busy} run={admin.run} />
+      <DictionaryEditorCard
+        key={JSON.stringify({
+          config: admin.snapshot.config,
+          dictionaries: admin.snapshot.dictionaries,
+        })}
+        snapshot={admin.snapshot}
+        busy={admin.busy}
+        run={admin.run}
+      />
       <TranslatableFieldsCard
+        key={`${admin.options.searchQuery ?? ''}:${admin.options.filter ?? 'all'}`}
         snapshot={admin.snapshot}
         options={admin.options}
         busy={admin.busy}

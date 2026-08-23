@@ -1,5 +1,5 @@
 import { Button, Input, Stack, Text } from '@ankhorage/zora';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/operations';
 import type { ExpoLocalizationTranslatableField } from '../authoring';
@@ -21,10 +21,6 @@ export function TranslatableFieldRow({
   const [key, setKey] = useState(
     field.currentKey || createExpoLocalizationKeyFromText(field.defaultText),
   );
-
-  useEffect(() => {
-    setKey(field.currentKey || createExpoLocalizationKeyFromText(field.defaultText));
-  }, [field.currentKey, field.defaultText]);
 
   return (
     <Stack gap={6}>
