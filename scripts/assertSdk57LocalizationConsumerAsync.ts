@@ -29,6 +29,7 @@ interface ExpectedPackageGraph {
   readonly runtime: PackageIdentity;
   readonly runtimeRequirement: string;
   readonly surface: PackageIdentity;
+  readonly surfaceRequirement: string;
   readonly zora: PackageIdentity;
   readonly zoraRequirement: string;
 }
@@ -134,16 +135,18 @@ async function assertGeneratedSourcesAsync(
 async function assertInstalledPackageAsync(
   consumerRoot: string,
   expectedPackage: PackageIdentity,
+  requiredRange: string,
 ): Promise<void> {
   const installedPackage = await readPackageManifestAsync(
     path.join(consumerRoot, 'node_modules', expectedPackage.name, 'package.json'),
   );
   if (
     installedPackage.name !== expectedPackage.name ||
-    installedPackage.version !== expectedPackage.version
+    typeof installedPackage.version !== 'string' ||
+    !Bun.semver.satisfies(installedPackage.version, requiredRange)
   ) {
     throw new Error(
-      `Packed consumer did not resolve released ${expectedPackage.name}@${expectedPackage.version}.`,
+      `Packed consumer did not resolve ${expectedPackage.name} within ${requiredRange}.`,
     );
   }
 }
@@ -152,9 +155,14 @@ async function assertReleasedGraphAsync(
   consumerRoot: string,
   expectedPackages: ExpectedPackageGraph,
 ): Promise<void> {
+  const requirements: readonly (readonly [PackageIdentity, string])[] = [
+    [expectedPackages.runtime, expectedPackages.runtimeRequirement],
+    [expectedPackages.surface, expectedPackages.surfaceRequirement],
+    [expectedPackages.zora, expectedPackages.zoraRequirement],
+  ];
   await Promise.all(
-    [expectedPackages.runtime, expectedPackages.surface, expectedPackages.zora].map(
-      async (expectedPackage) => assertInstalledPackageAsync(consumerRoot, expectedPackage),
+    requirements.map(async ([expectedPackage, requiredRange]) =>
+      assertInstalledPackageAsync(consumerRoot, expectedPackage, requiredRange),
     ),
   );
   const graph = await listInstalledGraphAsync(consumerRoot);
