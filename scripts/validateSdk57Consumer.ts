@@ -29,6 +29,7 @@ interface ExpectedPackageGraph {
   readonly runtime: PackageIdentity;
   readonly runtimeRequirement: string;
   readonly surface: PackageIdentity;
+  readonly surfaceRequirement: string;
   readonly zora: PackageIdentity;
   readonly zoraRequirement: string;
 }
@@ -92,6 +93,7 @@ try {
     runtime: requirePackageIdentity(runtimePackage, '@ankhorage/expo-runtime'),
     runtimeRequirement: requireVersion(repositoryPackage.dependencies, '@ankhorage/expo-runtime'),
     surface: requirePackageIdentity(surfacePackage, '@ankhorage/surface'),
+    surfaceRequirement: requireVersion(zoraPackage.dependencies, '@ankhorage/surface'),
     zora: requirePackageIdentity(zoraPackage, '@ankhorage/zora'),
     zoraRequirement: requireVersion(repositoryPackage.peerDependencies, '@ankhorage/zora'),
   };
@@ -133,7 +135,10 @@ try {
       { capture: true },
     ),
   ) as PlatformProjection;
-  if (JSON.stringify(platform) !== JSON.stringify(expectedPlatform)) {
+  if (
+    JSON.stringify(toVersionPolicyShape(platform)) !==
+    JSON.stringify(toVersionPolicyShape(expectedPlatform))
+  ) {
     throw new Error('Consumer resolved a different released platform contract.');
   }
   await writeApplyScriptAsync(consumerRoot);
@@ -167,6 +172,19 @@ try {
   console.log('SDK 57 packed Localization consumer acceptance passed for Web, Android, and iOS.');
 } finally {
   await rm(scratchRoot, { recursive: true, force: true });
+}
+
+function toVersionPolicyShape(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(toVersionPolicyShape);
+  if (typeof value !== 'object' || value === null) return value;
+  return Object.fromEntries(
+    Object.entries(value).map(([key, entry]) => [
+      key,
+      key === 'version' && typeof entry === 'string'
+        ? entry.replace(/^\D*(\d+\.\d+)(?:\.\d+)?(?:\D.*)?$/u, '$1.x')
+        : toVersionPolicyShape(entry),
+    ]),
+  );
 }
 
 async function assertNativeLocalesAsync(consumerRoot: string): Promise<void> {

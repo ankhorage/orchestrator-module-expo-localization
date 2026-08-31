@@ -75,7 +75,7 @@ async function writeConsumerPackageAsync(
       platform.expoRouter,
       platform.metroRuntime,
       ...platform.requiredPeers,
-    ].map((dependency) => [dependency.name, dependency.version]),
+    ].map((dependency) => [dependency.name, toCompatiblePolicySpecifier(dependency.version)]),
   );
   const packageJson = {
     name: 'expo-localization-sdk57-acceptance',
@@ -100,6 +100,10 @@ async function writeConsumerPackageAsync(
     `${JSON.stringify(packageJson, null, 2)}\n`,
     'utf8',
   );
+}
+
+function toCompatiblePolicySpecifier(version: string): string {
+  return version.replace(/^(\d+\.\d+)\.\d+$/u, '$1.x');
 }
 
 async function writeConsumerSourceAsync(consumerRoot: string): Promise<void> {

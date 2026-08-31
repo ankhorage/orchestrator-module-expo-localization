@@ -46,10 +46,7 @@ export interface ExpoLocalizationMissingTranslation {
 }
 
 export type ExpoLocalizationFieldFilter =
-  | 'all'
-  | 'unlinked'
-  | 'missing-translations'
-  | 'incomplete';
+  'all' | 'unlinked' | 'missing-translations' | 'incomplete';
 
 export function collectExpoLocalizationTranslatableFields(args: {
   readonly screens: readonly ExpoLocalizationManifestScreen[];
