@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.6.2
+
+### Patch Changes
+
+- faad8fd: Update the Expo Runtime dependency to the current compatible release.
+
 ## 0.6.1
 
 ### Patch Changes
