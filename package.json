@@ -76,7 +76,7 @@
     }
   },
   "devDependencies": {
-    "@ankhorage/devtools": "^1.10.6",
+    "@ankhorage/devtools": "^1.10.7",
     "@ankhorage/zora": "^4.0.0",
     "@types/bun": "^1.4.0",
     "@types/node": "^24.13.3",
