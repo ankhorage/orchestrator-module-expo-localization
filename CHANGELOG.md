@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.6.5
+
+### Patch Changes
+
+- c40bc1c: Align the Expo SDK 57 consumer and managed tooling with the current Ankhorage releases.
+
 ## 0.6.4
 
 ### Patch Changes
