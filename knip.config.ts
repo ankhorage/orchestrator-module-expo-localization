@@ -6,5 +6,6 @@ export default createKnipConfig({
     'eslint.local.config.mjs',
     '.prettierrc.js',
     'prettier.local.config.js',
+    '.agents/skills/**/scripts/**',
   ],
 });
