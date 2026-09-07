@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.6.6
+
+### Patch Changes
+
+- 674db88: Update Ankhorage dependencies: `@ankhorage/zora`.
+
 ## 0.6.5
 
 ### Patch Changes
