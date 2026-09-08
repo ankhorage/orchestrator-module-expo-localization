@@ -1,7 +1,7 @@
 {
   "license": "MIT",
   "name": "@ankhorage/orchestrator-module-expo-localization",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "description": "Expo localization module for @ankhorage/orchestrator.",
   "type": "module",
   "main": "./dist/index.js",
