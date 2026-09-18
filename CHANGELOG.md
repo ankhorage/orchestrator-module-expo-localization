@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.6.9
+
+### Patch Changes
+
+- 45e6d3a: Update Ankhorage dependencies: `@ankhorage/expo-runtime`.
+
 ## 0.6.8
 
 ### Patch Changes
