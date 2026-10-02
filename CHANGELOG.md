@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.6.10
+
+### Patch Changes
+
+- d818743: Update Renovate-managed workflows.
+
 ## 0.6.9
 
 ### Patch Changes
