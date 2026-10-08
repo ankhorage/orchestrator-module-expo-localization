@@ -166,6 +166,8 @@ function assertGeneratedFiles(actions: readonly ModuleAction[]): void {
   expect(provider).not.toContain('@ankh/runtime');
   expect(runtime).toContain('@ankhorage/runtime');
   expect(runtime).not.toContain('@ankh/runtime');
+  expect(runtime).toContain('"localization.setLanguage"');
+  expect(runtime).not.toContain('type: "setLanguage"');
   expect(provider).toContain('RuntimeRendererConfigProvider');
   expect(provider).not.toContain('@ankhorage/surface');
   expect(provider).toContain('"en": { translation: require("./locales/en.json") }');

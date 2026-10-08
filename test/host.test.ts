@@ -47,7 +47,12 @@ describe('expo localization host contribution', () => {
     );
     const source = adminSources.join('\n');
 
-    expect(Object.keys(packageJson.exports ?? {})).toEqual(['.', './host', './admin-view']);
+    expect(Object.keys(packageJson.exports ?? {})).toEqual([
+      '.',
+      './host',
+      './admin-view',
+      './capabilities',
+    ]);
     expect(packageJson.dependencies?.['@ankhorage/orchestrator']).toMatch(CARET_SEMVER_RANGE);
     expect(packageJson.dependencies?.['@ankhorage/studio']).toBeUndefined();
     expect(packageJson.dependencies?.['@ankhorage/zora']).toBeUndefined();
