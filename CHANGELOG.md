@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.7.0
+
+### Minor Changes
+
+- 348276c: Publish the canonical `localization.setLanguage` capability for generated Expo localization handlers.
+
 ## 0.6.10
 
 ### Patch Changes
