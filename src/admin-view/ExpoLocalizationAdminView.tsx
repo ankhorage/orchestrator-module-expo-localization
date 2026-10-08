@@ -1,4 +1,4 @@
-import { Stack, Text } from '@ankhorage/zora';
+import { Text, View } from '@ankhorage/zora';
 
 import { DictionaryEditorCard } from './DictionaryEditorCard';
 import { LocaleManagementCard } from './LocaleManagementCard';
@@ -20,7 +20,7 @@ export function ExpoLocalizationAdminView(props: ExpoLocalizationAdminViewProps)
   }
 
   return (
-    <Stack gap={12}>
+    <View gap={12}>
       {admin.message ? <Text color="danger">{admin.message}</Text> : null}
       <LocaleManagementCard snapshot={admin.snapshot} busy={admin.busy} run={admin.run} />
       <DictionaryEditorCard
@@ -41,6 +41,6 @@ export function ExpoLocalizationAdminView(props: ExpoLocalizationAdminViewProps)
         run={admin.run}
       />
       <MissingTranslationsCard snapshot={admin.snapshot} />
-    </Stack>
+    </View>
   );
 }

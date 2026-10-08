@@ -1,4 +1,4 @@
-import { Button, Card, Input, Select, Stack } from '@ankhorage/zora';
+import { Button, Card, Select, TextInput, View } from '@ankhorage/zora';
 import { useState } from 'react';
 
 import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/operations';
@@ -18,7 +18,7 @@ export function DictionaryEditorCard({ snapshot, busy, run }: DictionaryEditorCa
 
   return (
     <Card title="Dictionary entry" description="Edit the canonical locale JSON resources directly.">
-      <Stack gap={8}>
+      <View gap={8}>
         <Select
           value={locale}
           options={localeOptions}
@@ -28,7 +28,7 @@ export function DictionaryEditorCard({ snapshot, busy, run }: DictionaryEditorCa
           }}
           disabled={busy}
         />
-        <Input
+        <TextInput
           accessibilityLabel="Translation key"
           value={key}
           autoCapitalize="none"
@@ -37,7 +37,7 @@ export function DictionaryEditorCard({ snapshot, busy, run }: DictionaryEditorCa
             setValue(readTranslation(snapshot, locale, nextKey));
           }}
         />
-        <Input
+        <TextInput
           accessibilityLabel="Translation value"
           value={value}
           multiline
@@ -50,7 +50,7 @@ export function DictionaryEditorCard({ snapshot, busy, run }: DictionaryEditorCa
           busy={busy}
           run={run}
         />
-      </Stack>
+      </View>
     </Card>
   );
 }
@@ -66,7 +66,7 @@ function DictionaryEntryActions(props: {
   const normalizedKey = translationKey.trim();
 
   return (
-    <Stack direction="row" gap={8}>
+    <View direction="row" gap={8}>
       <Button
         loading={busy}
         disabled={!normalizedKey}
@@ -93,7 +93,7 @@ function DictionaryEntryActions(props: {
       >
         Delete
       </Button>
-    </Stack>
+    </View>
   );
 }
 

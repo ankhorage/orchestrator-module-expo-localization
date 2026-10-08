@@ -1,4 +1,4 @@
-import { Button, Card, Input, Select, type SelectOption, Stack, Text } from '@ankhorage/zora';
+import { Button, Card, Select, type SelectOption, Text, TextInput, View } from '@ankhorage/zora';
 import { useState } from 'react';
 
 import type {
@@ -33,9 +33,9 @@ export function TranslatableFieldsCard(props: TranslatableFieldsCardProps) {
       title="Translatable fields"
       description="Discover and link fields from component metadata."
     >
-      <Stack gap={10}>
-        <Stack direction="row" gap={8} align="center">
-          <Input
+      <View gap={10}>
+        <View direction="row" gap={8} align="center">
+          <TextInput
             accessibilityLabel="Search translatable fields"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -48,7 +48,7 @@ export function TranslatableFieldsCard(props: TranslatableFieldsCardProps) {
           >
             Apply
           </Button>
-        </Stack>
+        </View>
         {props.snapshot.visibleFields.length === 0 ? (
           <Text color="neutral" emphasis="muted">
             No matching translatable fields.
@@ -67,7 +67,7 @@ export function TranslatableFieldsCard(props: TranslatableFieldsCardProps) {
             />
           ))
         )}
-      </Stack>
+      </View>
     </Card>
   );
 }

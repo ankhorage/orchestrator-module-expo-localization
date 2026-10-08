@@ -1,4 +1,4 @@
-import { Card, Stack, Text } from '@ankhorage/zora';
+import { Card, Text, View } from '@ankhorage/zora';
 
 import type { ExpoLocalizationAdminSnapshot } from '../admin/types';
 
@@ -12,7 +12,7 @@ export function MissingTranslationsCard({
       title="Missing translations"
       description="Keys that are incomplete across configured locales."
     >
-      <Stack gap={6}>
+      <View gap={6}>
         {snapshot.missingTranslations.length === 0 ? (
           <Text color="neutral" emphasis="muted">
             No missing translations.
@@ -24,7 +24,7 @@ export function MissingTranslationsCard({
             </Text>
           ))
         )}
-      </Stack>
+      </View>
     </Card>
   );
 }
