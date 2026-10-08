@@ -1,4 +1,4 @@
-import { Button, Card, Input, Stack, Text } from '@ankhorage/zora';
+import { Button, Card, Text, TextInput, View } from '@ankhorage/zora';
 import { useState } from 'react';
 
 import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/operations';
@@ -16,7 +16,7 @@ export function LocaleManagementCard({ snapshot, busy, run }: LocaleManagementCa
 
   return (
     <Card title="Locales" description="Configure supported locales and the default locale.">
-      <Stack gap={8}>
+      <View gap={8}>
         {config.locales.map((locale) => (
           <LocaleRow
             key={locale}
@@ -27,8 +27,8 @@ export function LocaleManagementCard({ snapshot, busy, run }: LocaleManagementCa
             run={run}
           />
         ))}
-        <Stack direction="row" gap={8} align="center">
-          <Input
+        <View direction="row" gap={8} align="center">
+          <TextInput
             accessibilityLabel="New locale"
             value={newLocale}
             autoCapitalize="none"
@@ -45,8 +45,8 @@ export function LocaleManagementCard({ snapshot, busy, run }: LocaleManagementCa
           >
             Add locale
           </Button>
-        </Stack>
-      </Stack>
+        </View>
+      </View>
     </Card>
   );
 }
@@ -62,9 +62,9 @@ function LocaleRow(props: {
   const isDefault = locale === defaultLocale;
 
   return (
-    <Stack direction="row" gap={8} align="center" justify="space-between">
+    <View direction="row" gap={8} align="center" justify="space-between">
       <Text>{isDefault ? `${locale} (default)` : locale}</Text>
-      <Stack direction="row" gap={8}>
+      <View direction="row" gap={8}>
         {!isDefault ? (
           <Button
             variant="outline"
@@ -84,7 +84,7 @@ function LocaleRow(props: {
         >
           Remove
         </Button>
-      </Stack>
-    </Stack>
+      </View>
+    </View>
   );
 }

@@ -55,11 +55,11 @@ function isSetLanguageAction(action: {
   type: string;
   payload?: unknown;
 }): action is {
-  type: "setLanguage";
+  type: "localization.setLanguage";
   payload: { locale: string };
 } {
   return (
-    action.type === "setLanguage" &&
+    action.type === "localization.setLanguage" &&
     isRecord(action.payload) &&
     isNonEmptyString(action.payload.locale)
   );
@@ -95,7 +95,7 @@ export function createLocalizationActionHandlers(
   i18n: Pick<I18nInstance, "changeLanguage">,
 ): RuntimeActionHandlers {
   return {
-    setLanguage: ({ action }) => {
+    "localization.setLanguage": ({ action }) => {
       if (!isSetLanguageAction(action)) {
         return;
       }

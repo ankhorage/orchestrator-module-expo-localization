@@ -24,6 +24,41 @@
     "typescript"
   ],
   "sideEffects": false,
+  "ankh": {
+    "category": "expo-localization",
+    "provider": null,
+    "capabilities": [
+      {
+        "id": "localization.setLanguage",
+        "owner": "@ankhorage/orchestrator-module-expo-localization",
+        "access": [
+          "invoke"
+        ],
+        "binding": {
+          "kind": "action",
+          "bindableAs": [
+            "target"
+          ]
+        },
+        "label": "Set language",
+        "description": "Change the active application language.",
+        "input": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "locale"
+            ],
+            "properties": {
+              "locale": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
   "files": [
     "dist",
     "templates",
@@ -43,6 +78,10 @@
     "./admin-view": {
       "types": "./dist/admin-view/index.d.ts",
       "default": "./dist/admin-view/index.js"
+    },
+    "./capabilities": {
+      "types": "./dist/capabilities/index.d.ts",
+      "default": "./dist/capabilities/index.js"
     }
   },
   "scripts": {
@@ -61,11 +100,12 @@
     "knip:check": "ankhorage-knip"
   },
   "dependencies": {
-    "@ankhorage/expo-runtime": "^3.2.17",
-    "@ankhorage/orchestrator": "^0.3.3"
+    "@ankhorage/contracts": "^24.2.1",
+    "@ankhorage/expo-runtime": "^6.0.0",
+    "@ankhorage/orchestrator": "^0.4.1"
   },
   "peerDependencies": {
-    "@ankhorage/zora": "^4.5.0",
+    "@ankhorage/zora": "^24.1.2",
     "react": ">=18.2.0"
   },
   "peerDependenciesMeta": {
@@ -77,9 +117,9 @@
     }
   },
   "devDependencies": {
-    "@ankhorage/devtools": "^1.17.0",
-    "@ankhorage/zora": "^4.5.0",
-    "@types/bun": "^1.4.1",
+    "@ankhorage/devtools": "^2.3.6",
+    "@ankhorage/zora": "^24.1.2",
+    "@types/bun": "^1.4.2",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.14",
     "react": "19.2.3",

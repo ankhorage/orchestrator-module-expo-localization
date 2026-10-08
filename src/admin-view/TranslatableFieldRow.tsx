@@ -1,4 +1,4 @@
-import { Button, Input, Stack, Text } from '@ankhorage/zora';
+import { Button, Text, TextInput, View } from '@ankhorage/zora';
 import { useState } from 'react';
 
 import { EXPO_LOCALIZATION_ADMIN_OPERATIONS } from '../admin/operations';
@@ -23,7 +23,7 @@ export function TranslatableFieldRow({
   );
 
   return (
-    <Stack gap={6}>
+    <View gap={6}>
       <Text weight="semiBold">{field.path}</Text>
       <Text color="neutral" emphasis="muted" variant="caption">
         {field.defaultText || 'No default text'}
@@ -33,8 +33,8 @@ export function TranslatableFieldRow({
           Missing: {missingLocales.join(', ')}
         </Text>
       ) : null}
-      <Stack direction="row" gap={8} align="center">
-        <Input
+      <View direction="row" gap={8} align="center">
+        <TextInput
           accessibilityLabel={`Translation key for ${field.path}`}
           value={key}
           autoCapitalize="none"
@@ -54,7 +54,7 @@ export function TranslatableFieldRow({
         >
           {field.currentKey ? 'Relink' : 'Link'}
         </Button>
-      </Stack>
-    </Stack>
+      </View>
+    </View>
   );
 }
