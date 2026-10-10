@@ -1,4 +1,4 @@
-import { isCapability } from '@ankhorage/contracts/capabilities';
+import { isCapability } from '@ankhorage/capability';
 import { describe, expect, test } from 'bun:test';
 
 import packageJson from '../package.json';

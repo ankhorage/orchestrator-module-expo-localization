@@ -1,4 +1,4 @@
-import type { Capability } from '@ankhorage/contracts/capabilities';
+import type { Capability } from '@ankhorage/contracts/capability';
 
 /*** Publish the localization action executed by generated Expo applications. */
 export const CAPABILITIES = [
