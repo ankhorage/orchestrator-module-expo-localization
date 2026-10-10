@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.7.1
+
+### Patch Changes
+
+- 6132906: Migrate the localization capability catalog to the current capability APIs.
+
 ## 0.7.0
 
 ### Minor Changes
