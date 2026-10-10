@@ -101,9 +101,9 @@
   },
   "dependencies": {
     "@ankhorage/capability": "^0.2.1",
-    "@ankhorage/contracts": "^25.0.0",
+    "@ankhorage/contracts": "^25.2.0",
     "@ankhorage/expo-runtime": "^6.0.0",
-    "@ankhorage/orchestrator": "^0.4.1"
+    "@ankhorage/orchestrator": "^0.4.3"
   },
   "peerDependencies": {
     "@ankhorage/zora": "^24.1.2",
@@ -119,7 +119,7 @@
   },
   "devDependencies": {
     "@ankhorage/devtools": "^2.3.6",
-    "@ankhorage/zora": "^24.1.2",
+    "@ankhorage/zora": "^25.6.2",
     "@types/bun": "^1.4.2",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.14",
