@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.7.2
+
+### Patch Changes
+
+- e0e9d05: Update dependencies: `@ankhorage/contracts`, `@ankhorage/expo-runtime`, `@ankhorage/orchestrator`, `@ankhorage/zora`.
+
 ## 0.7.1
 
 ### Patch Changes
