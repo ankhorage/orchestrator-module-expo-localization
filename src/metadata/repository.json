@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "kind": "adapter",
+  "title": "Ankhorage Expo Localization Orchestrator Module",
+  "summary": "Provides an Orchestrator module, host bindings, and administration UI for Expo localization resources and configuration.",
+  "purpose": "Manage Expo localization as a deterministic project module while keeping runtime and authoring integrations explicit.",
+  "domain": "Expo localization module",
+  "responsibilities": [
+    "Define localization module configuration, resources, templates, and lifecycle behavior.",
+    "Expose host and capability bindings for localization runtime integration.",
+    "Provide administration operations and UI for dictionaries, locales, missing translations, and translatable fields."
+  ],
+  "boundaries": [
+    "Does not own the Orchestrator lifecycle engine or Expo runtime.",
+    "Does not define application-specific translation content.",
+    "Does not make ZORA a hard runtime dependency outside the optional administration view."
+  ],
+  "audience": [
+    "Expo projects installing localization through Ankhorage Orchestrator.",
+    "Authoring tools that manage localization resources and dictionaries."
+  ],
+  "useCases": [
+    "Install localization configuration and resource templates into an Expo project.",
+    "Bind project localization through the module host entrypoint.",
+    "Manage locales and translation dictionaries through the administration view."
+  ],
+  "architecture": {
+    "role": "Provider module adapting Expo localization concerns to Orchestrator lifecycle and host boundaries.",
+    "invariants": [
+      "Project changes are expressed through the published Orchestrator module contract.",
+      "Runtime integration uses the published Expo Runtime boundary.",
+      "Administration UI remains an explicit optional subpath."
+    ]
+  },
+  "constraints": {
+    "platforms": ["Expo", "React Native"],
+    "limitations": [
+      "Administration UI requires compatible React and ZORA peers.",
+      "Localization behavior is limited to resources and operations defined by the module."
+    ]
+  }
+}
