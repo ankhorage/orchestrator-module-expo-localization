@@ -1,5 +1,11 @@
 # @ankhorage/orchestrator-module-expo-localization
 
+## 0.7.4
+
+### Patch Changes
+
+- 15a41de: Add canonical repository metadata for organization discovery, managed-agent guidance, and documentation.
+
 ## 0.7.3
 
 ### Patch Changes
